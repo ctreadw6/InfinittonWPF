@@ -29,6 +29,9 @@ namespace InfinittonWPF
 
         public static HomeFolderAction HomeAction = new HomeFolderAction() { IconPath = HomeIconPath };
 
+        DateTime lastButtonPressTime = DateTime.MinValue;
+        private int lastButtonPressNum = -1;
+
         public void handle(object s, USBInterface.ReportEventArgs a)
         {
             if (IgnoreReport) return;
@@ -36,6 +39,12 @@ namespace InfinittonWPF
             int val = a.Data[1] << 8 | a.Data[2];
             int buttonNum = ButtonMapper.GetButtonIndex((ushort)val) + 1;
             if (buttonNum <= 0) return;
+
+            // Not sure why each report happens twice, but this will try and weed them out
+            if (lastButtonPressNum == buttonNum && DateTime.Now.Subtract(lastButtonPressTime).TotalSeconds < 1) return;
+            lastButtonPressTime = DateTime.Now;
+            lastButtonPressNum = buttonNum;
+
             Console.WriteLine(string.Join(", ", a.Data));
             Console.WriteLine("Button " + buttonNum);
             PerformAction(buttonNum);
