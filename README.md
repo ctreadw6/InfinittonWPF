@@ -1,5 +1,6 @@
 # InfinittonWPF
 The start of a more in depth interface/controller for the Infinitton Smart Keyboard
+Feel free to contribute or add suggestions in the Issues section!
 
 Current button types:
 Folders
