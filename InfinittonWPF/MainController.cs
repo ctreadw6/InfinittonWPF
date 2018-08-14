@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using WindowsInput;
 using USBInterface;
 
 namespace InfinittonWPF
@@ -26,6 +27,7 @@ namespace InfinittonWPF
         String FolderIconPath = Path.GetFullPath("Folder-Icon.png");
         public static String HomeIconPath = Path.GetFullPath("Home.png");
         Random random = new Random();
+        
 
         public static HomeFolderAction HomeAction = new HomeFolderAction() { IconPath = HomeIconPath };
 
@@ -121,7 +123,7 @@ namespace InfinittonWPF
             }
 
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]") + 1;
-            i2 = Properties.Settings.Default.ActionsSetting.Count;
+            i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]");
             for (int i = i1; i < i2; i += 3)
             {
                 var action = new LaunchAction();
@@ -131,6 +133,16 @@ namespace InfinittonWPF
                 if (File.Exists("Images/" + path + ".png")) action.IconPath = "Images/" + path + ".png";
 
                 allActions.TryAdd(path, action);
+            }
+
+            i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]") + 1;
+            i2 = Properties.Settings.Default.ActionsSetting.Count;
+            for (int i = i1; i < i2; i +=2)
+            {
+                var action = new TextStringAction();
+                string path = Properties.Settings.Default.ActionsSetting[i];
+                action.Value = Properties.Settings.Default.ActionsSetting[i + 1];
+                allActions.TryAdd(Properties.Settings.Default.ActionsSetting[i], action);
             }
         }
 
@@ -150,6 +162,14 @@ namespace InfinittonWPF
                 setting.Add(kvp.Key);
                 setting.Add(action.ExePath);
                 setting.Add(action.Args);
+            }
+
+            setting.Add("[StringActions]");
+            foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(TextStringAction)))
+            {
+                var action = kvp.Value as TextStringAction;
+                setting.Add(kvp.Key);
+                setting.Add(action?.Value);
             }
 
             Properties.Settings.Default.ActionsSetting = setting;

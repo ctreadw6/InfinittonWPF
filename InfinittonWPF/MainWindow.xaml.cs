@@ -33,6 +33,11 @@ namespace InfinittonWPF
             get { return "Folder-icon.png"; }
         }
 
+        public String TextStringActionPath
+        {
+            get { return "textStringIcon.png"; }
+        }
+
         public int SelectedNumber = -1;
         public Image SelectedImage = null;
 
@@ -177,6 +182,9 @@ namespace InfinittonWPF
                     case "StartProgramAction":
                         Actions[imageNum] = new LaunchAction();
                         break;
+                    case "TextStringAction":
+                        Actions[imageNum] = new TextStringAction();
+                        break;
                 }
                 controller.AddAction(imageNum + 1, Actions[imageNum]);
                 Notify("Action" + imageNum.ToString());
@@ -238,13 +246,21 @@ namespace InfinittonWPF
                 if (Actions[SelectedNumber] is LaunchAction)
                 {
                     LaunchActionPanel.Visibility = Visibility.Visible;
+                    TextStringActionPanel.Visibility = Visibility.Collapsed;
                     tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                     tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
+                }
+                else if (Actions[SelectedNumber] is TextStringAction)
+                {
+                    LaunchActionPanel.Visibility = Visibility.Collapsed;
+                    TextStringActionPanel.Visibility = Visibility.Visible;
+                    tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
                 }
                 else
                 {
                     tbPath.Text = tbArgs.Text = "";
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
+                    TextStringActionPanel.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -265,6 +281,10 @@ namespace InfinittonWPF
                 tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                 tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
             }
+            else if (Actions[SelectedNumber] is TextStringAction)
+            {
+                tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
+            }
         }
 
         private void saveButtonClick(object sender, RoutedEventArgs e)
@@ -275,7 +295,11 @@ namespace InfinittonWPF
                 (Actions[SelectedNumber] as LaunchAction).Args = tbArgs.Text;
                 controller.Save();
             }
-            
+            else if (Actions[SelectedNumber] is TextStringAction)
+            {
+                (Actions[SelectedNumber] as TextStringAction).Value = tbValue.Text;
+            }
+
         }
     }
 }
