@@ -1,0 +1,144 @@
+﻿<Window x:Class="InfinittonWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InfinittonWPF"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Loaded="MainWindow_OnLoaded"
+        Title="MainWindow" Height="530.447" Width="775.968">
+    <Window.Resources>
+        <Style x:Key="myBorderStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="DarkGray"></Setter>
+            <Setter Property="BorderThickness" Value="2"></Setter>
+        </Style>
+        <Style x:Key="myImageStyle" TargetType="Image">
+            <Setter Property="AllowDrop" Value="True"></Setter>
+            <EventSetter Event="Drop" Handler="imageDrop" />
+            <EventSetter Event="MouseLeftButtonDown" Handler="ImageMouseLeftButtonDown"></EventSetter>
+        </Style>
+        <Style x:Key="myActionImageStyle" TargetType="Image">
+            <EventSetter Event="MouseLeftButtonDown" Handler="actionImageMouseLeftButtonDown"></EventSetter>
+        </Style>
+        <local:PathToImageConverter x:Key="myImageConverter"></local:PathToImageConverter>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Grid.RowSpan="3" x:Name="leftPanelGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="92"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Row="0" Grid.Column="1" Source="{Binding StartProgramActionPath}" Style="{StaticResource myActionImageStyle}"  Tag="StartProgramAction"/>
+            <Image Grid.Row="1" Grid.Column="1" Source="{Binding FolderActionPath}" Style="{StaticResource myActionImageStyle}" Tag="FolderAction"/>
+        </Grid>
+        <Grid Grid.Column="1" Grid.RowSpan="3" x:Name="mainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="92"/>
+                <ColumnDefinition Width="92"/>
+                <ColumnDefinition Width="92"/>
+            </Grid.ColumnDefinitions>
+            <Slider x:Name="brightnessSlider" ValueChanged="BrightnessSlider_OnValueChanged" Minimum="0" Maximum="100" Grid.ColumnSpan="3"/>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="0">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action0, Converter={StaticResource myImageConverter}}" Tag="0"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="1">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action5, Converter={StaticResource myImageConverter}}" Tag="5"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="2">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action10, Converter={StaticResource myImageConverter}}" Tag="10"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="2" Grid.Column="0">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action1, Converter={StaticResource myImageConverter}}" Tag="1"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="2" Grid.Column="1">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action6, Converter={StaticResource myImageConverter}}" Tag="6"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="2" Grid.Column="2">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action11, Converter={StaticResource myImageConverter}}" Tag="11"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="3" Grid.Column="0">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action2, Converter={StaticResource myImageConverter}}" Tag="2"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="3" Grid.Column="1">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action7, Converter={StaticResource myImageConverter}}" Tag="7"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="3" Grid.Column="2">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action12, Converter={StaticResource myImageConverter}}" Tag="12"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="4" Grid.Column="0">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action3, Converter={StaticResource myImageConverter}}" Tag="3"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="4" Grid.Column="1">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action8, Converter={StaticResource myImageConverter}}" Tag="8"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="4" Grid.Column="2">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action13, Converter={StaticResource myImageConverter}}" Tag="13"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="5" Grid.Column="0">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action4, Converter={StaticResource myImageConverter}}" Tag="4"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="5" Grid.Column="1">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action9, Converter={StaticResource myImageConverter}}" Tag="9"></Image>
+            </Border>
+            <Border Style="{StaticResource myBorderStyle}" Grid.Row="5" Grid.Column="2">
+                <Image Style="{StaticResource myImageStyle}" Source="{Binding Action14, Converter={StaticResource myImageConverter}}" Tag="14"></Image>
+            </Border>
+        </Grid>
+        <Grid Grid.Column="2" Grid.RowSpan="3" x:Name="rightGrid">
+            <StackPanel Orientation="Vertical" Margin="5" x:Name="LaunchActionPanel">
+                <DockPanel>
+                    <TextBlock Text="Path: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="tbPath" Text="chrome.exe" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                    <Button VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right">
+                        <Button.Content>
+                            <materialDesign:PackIcon Kind="FileDocument"></materialDesign:PackIcon>
+                        </Button.Content>
+                    </Button>
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Text="Args: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="tbArgs" Text="www.google.com" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                </DockPanel>
+                <DockPanel>
+                    <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
+                    <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
+                </DockPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
+
