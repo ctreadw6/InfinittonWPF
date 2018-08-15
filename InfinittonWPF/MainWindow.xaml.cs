@@ -215,6 +215,9 @@ namespace InfinittonWPF
         {
             brightnessSlider.Value = Properties.Settings.Default.Brightness;
             controller = new MainController(this);
+            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.NewProcess.ToString());
+            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.FocusOldProcess.ToString());
+            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.KillOldProcess.ToString());
         }
 
         private void ImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -252,6 +255,8 @@ namespace InfinittonWPF
                     tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                     tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
                     tbTitleAction.Text = (Actions[SelectedNumber] as LaunchAction).Title;
+                    tbNewProcessAction.SelectedItem =
+                        (Actions[SelectedNumber] as LaunchAction).AlreadyRunningAction.ToString();
                 }
                 else if (Actions[SelectedNumber] is TextStringAction)
                 {
@@ -285,6 +290,8 @@ namespace InfinittonWPF
                 tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                 tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
                 tbTitleAction.Text = (Actions[SelectedNumber] as LaunchAction).Title;
+                tbNewProcessAction.SelectedItem =
+                    (Actions[SelectedNumber] as LaunchAction).AlreadyRunningAction.ToString();
             }
             else if (Actions[SelectedNumber] is TextStringAction)
             {
@@ -300,6 +307,9 @@ namespace InfinittonWPF
                 (Actions[SelectedNumber] as LaunchAction).ExePath = tbPath.Text;
                 (Actions[SelectedNumber] as LaunchAction).Args = tbArgs.Text;
                 (Actions[SelectedNumber] as LaunchAction).Title = tbTitleAction.Text;
+                var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
+                Enum.TryParse(tbNewProcessAction.SelectedItem.ToString(), out result);
+                (Actions[SelectedNumber] as LaunchAction).AlreadyRunningAction = result;
                 controller.Save();
             }
             else if (Actions[SelectedNumber] is TextStringAction)

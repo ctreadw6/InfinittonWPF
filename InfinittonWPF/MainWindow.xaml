@@ -120,7 +120,7 @@
             </Border>
         </Grid>
         <Grid Grid.Column="2" Grid.RowSpan="3" x:Name="rightGrid">
-            <StackPanel Orientation="Vertical" Margin="5" x:Name="LaunchActionPanel" Visibility="Collapsed">
+            <StackPanel Orientation="Vertical" Margin="5" x:Name="LaunchActionPanel" Visibility="Visible">
 
                 <DockPanel>
                     <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -139,12 +139,16 @@
                     <TextBlock Text="Args: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <TextBox x:Name="tbArgs" Text="www.google.com" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
                 </DockPanel>
+                <DockPanel>
+                    <TextBlock ToolTip="This is the action that should be taken if there is already an insance of this application running." Text="New Process Action: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <ComboBox x:Name="tbNewProcessAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" />
+                </DockPanel>
                 <DockPanel Margin="0,5,0,0">
                     <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
                     <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
                 </DockPanel>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="5" x:Name="TextStringActionPanel" Visibility="Visible">
+            <StackPanel Orientation="Vertical" Margin="5" x:Name="TextStringActionPanel" Visibility="Collapsed">
 
                 <DockPanel>
                     <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>

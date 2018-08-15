@@ -34,6 +34,20 @@ namespace InfinittonWPF
         DateTime lastButtonPressTime = DateTime.MinValue;
         private int lastButtonPressNum = -1;
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ShowWindow(IntPtr hWnd, int cmd);
+
+        // Maximize the window
+        public static bool ShowWindow(IntPtr hWnd)
+        {
+            return ShowWindow(hWnd, 3);
+        }
+
         public void handle(object s, USBInterface.ReportEventArgs a)
         {
             if (IgnoreReport) return;
@@ -121,13 +135,16 @@ namespace InfinittonWPF
 
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]") + 1;
             i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]");
-            for (int i = i1; i < i2; i += 4)
+            for (int i = i1; i < i2; i += 5)
             {
                 var action = new LaunchAction();
                 string path = Properties.Settings.Default.ActionsSetting[i];
                 action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
                 action.ExePath = Properties.Settings.Default.ActionsSetting[i + 2];
                 action.Args = Properties.Settings.Default.ActionsSetting[i + 3];
+                var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
+                Enum.TryParse(Properties.Settings.Default.ActionsSetting[i + 4], out result);
+                action.AlreadyRunningAction = result;
                 if (File.Exists("Images/" + path + ".png")) action.IconPath = "Images/" + path + ".png";
 
                 allActions.TryAdd(path, action);
@@ -141,7 +158,7 @@ namespace InfinittonWPF
                 string path = Properties.Settings.Default.ActionsSetting[i];
                 action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
                 action.Value = Properties.Settings.Default.ActionsSetting[i + 2];
-                allActions.TryAdd(Properties.Settings.Default.ActionsSetting[i], action);
+                allActions.TryAdd(path, action);
             }
         }
 
@@ -159,8 +176,10 @@ namespace InfinittonWPF
             {
                 var action = kvp.Value as LaunchAction;
                 setting.Add(kvp.Key);
+                setting.Add(action.Title);
                 setting.Add(action.ExePath);
                 setting.Add(action.Args);
+                setting.Add(action.AlreadyRunningAction.ToString());
             }
 
             setting.Add("[StringActions]");
@@ -168,6 +187,7 @@ namespace InfinittonWPF
             {
                 var action = kvp.Value as TextStringAction;
                 setting.Add(kvp.Key);
+                setting.Add(action?.Title);
                 setting.Add(action?.Value);
             }
 
