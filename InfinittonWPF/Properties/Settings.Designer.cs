@@ -45,5 +45,17 @@ namespace InfinittonWPF.Properties {
                 this["Brightness"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public int AFKDimTimeInSeconds {
+            get {
+                return ((int)(this["AFKDimTimeInSeconds"]));
+            }
+            set {
+                this["AFKDimTimeInSeconds"] = value;
+            }
+        }
     }
 }

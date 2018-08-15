@@ -66,6 +66,7 @@
     </ApplicationDefinition>
     <Compile Include="ButtonMapper.cs" />
     <Compile Include="FolderAction.cs" />
+    <Compile Include="IdleTimeFinder.cs" />
     <Compile Include="MacroAction.cs" />
     <Compile Include="TextStringAction.cs" />
     <Compile Include="PathToImageConverter .cs" />

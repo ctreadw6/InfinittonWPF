@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using WindowsInput;
+using Microsoft.Win32;
 using USBInterface;
 
 namespace InfinittonWPF
@@ -24,6 +25,7 @@ namespace InfinittonWPF
         ConcurrentDictionary<int, IButtonPressAction> actions = new ConcurrentDictionary<int, IButtonPressAction>();
         ConcurrentDictionary<string, IButtonPressAction> allActions = new ConcurrentDictionary<string, IButtonPressAction>();
         private MainWindow mainWindow;
+        
 
         public static String HomeIconPath = Path.GetFullPath("Home.png");
         Random random = new Random();
@@ -100,6 +102,33 @@ namespace InfinittonWPF
             Load();
             LoadIcons();
 
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+            Microsoft.Win32.SystemEvents.SessionSwitch += new Microsoft.Win32.SessionSwitchEventHandler(SystemEvents_SessionSwitch);
+        }
+
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            if (e.Reason == SessionSwitchReason.SessionLock)
+            {
+                SetDeviceBrightness(0);
+            }
+            else if (e.Reason == SessionSwitchReason.SessionUnlock)
+            {
+                SetDeviceBrightness(Properties.Settings.Default.Brightness);
+            }
+        }
+
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            switch (e.Mode)
+            {
+                case PowerModes.Resume:
+                    SetDeviceBrightness(Properties.Settings.Default.Brightness);
+                    break;
+                case PowerModes.Suspend:
+                    SetDeviceBrightness(0);
+                    break;
+            }
         }
 
         public void ChangeFolder(int folderNum)
