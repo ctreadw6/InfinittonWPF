@@ -50,6 +50,11 @@ namespace InfinittonWPF
             return ShowWindow(hWnd, 3);
         }
 
+        public bool CheckDevice()
+        {
+            return device != null && device.isOpen;
+        }
+
         public void handle(object s, USBInterface.ReportEventArgs a)
         {
             if (IgnoreReport) return;
@@ -70,22 +75,6 @@ namespace InfinittonWPF
 
         public void enter(object s, EventArgs a)
         {
-            Console.WriteLine("device arrived");
-        }
-        public void exit(object s, EventArgs a)
-        {
-            Console.WriteLine("device removed");
-        }
-
-        public MainController(MainWindow _mainWindow)
-        {
-            if (!Directory.Exists("Images")) Directory.CreateDirectory("Images");
-            mainWindow = _mainWindow;
-
-            scanner = new DeviceScanner(0xffff, 0x1f40);
-            scanner.DeviceArrived += enter;
-            scanner.DeviceRemoved += exit;
-            scanner.StartAsyncScan();
             device = new USBDevice(0xffff, 0x1f40, null, false, 31);
 
             if (device == null) return;
@@ -101,6 +90,22 @@ namespace InfinittonWPF
 
             Load();
             LoadIcons();
+        }
+        public void exit(object s, EventArgs a)
+        {
+            device = null;
+        }
+
+        public MainController(MainWindow _mainWindow)
+        {
+            if (!Directory.Exists("Images")) Directory.CreateDirectory("Images");
+            mainWindow = _mainWindow;
+
+            scanner = new DeviceScanner(0xffff, 0x1f40);
+            scanner.DeviceArrived += enter;
+            scanner.DeviceRemoved += exit;
+            scanner.StartAsyncScan();
+
 
             SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
             Microsoft.Win32.SystemEvents.SessionSwitch += new Microsoft.Win32.SessionSwitchEventHandler(SystemEvents_SessionSwitch);
@@ -108,6 +113,7 @@ namespace InfinittonWPF
 
         private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
+            if (!CheckDevice()) return;
             if (e.Reason == SessionSwitchReason.SessionLock)
             {
                 SetDeviceBrightness(0);
@@ -120,6 +126,7 @@ namespace InfinittonWPF
 
         private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
+            if (!CheckDevice()) return;
             switch (e.Mode)
             {
                 case PowerModes.Resume:
@@ -132,7 +139,7 @@ namespace InfinittonWPF
         }
 
         public void ChangeFolder(int folderNum)
-        {   
+        {
             if (folderNum < 0)
             {
                 // Go up a dir
@@ -266,6 +273,7 @@ namespace InfinittonWPF
 
         public void LoadIcons()
         {
+            if (!CheckDevice()) return;
             lock (lockObj)
             {
                 IgnoreReport = true;
@@ -319,6 +327,7 @@ namespace InfinittonWPF
 
         public void SetDeviceBrightness(int val)
         {
+            if (!CheckDevice()) return;
             //lock (lockObj)
             {
                 byte[] buf = new byte[] { 0x11, (byte)val };
@@ -329,6 +338,7 @@ namespace InfinittonWPF
 
         public void SendKeyFeature(int key, IButtonPressAction action)
         {
+            if (!CheckDevice()) return;
             int numTimes = 3;
             //lock (lockObj)
             {

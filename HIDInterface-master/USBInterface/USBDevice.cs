@@ -86,7 +86,7 @@ namespace USBInterface
             , int defaultInputReportLen = -1)
         {
             DeviceHandle = HidApi.hid_open(VendorID, ProductID, serial_number);
-            AssertValidDev();
+
             DefaultInputReportLength = defaultInputReportLen;
             hasReportIds = HasReportIDs;
         }
