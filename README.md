@@ -5,9 +5,13 @@ Feel free to contribute or add suggestions in the Issues section!
 Current button types:<br/>
 Folders<br/>
 Launch (Exe or Website)<br/>
-Send Text String<br/>
+Send Text String
 
 <br/><br/>
-Improvements on Infinitton's software:<br/>
-Folders inside Folders inside Folders<br/>
+Improvements on Infinitton's software:<br/><br/>
+Folders:<br/>
+Folders inside Folders inside Folders<br/><br/>
+Launch EXE:<br/>
 Launching EXE can now take arguments<br/>
+When launching an EXE, you can take different actions if the application is already running: Kill the old process, focus the old process, start a new process<br/>
+
