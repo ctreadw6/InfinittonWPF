@@ -58,6 +58,8 @@ namespace InfinittonWPF
             get { return _Actions; }
         }
 
+        // This is terrible, but it lets me bind it to the UI easily. 
+        // Probably should refactor this it some point.
         public String Action0
         {
             get { return Actions[0].IconPath; }
@@ -249,16 +251,18 @@ namespace InfinittonWPF
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
                     tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                     tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
+                    tbTitleAction.Text = (Actions[SelectedNumber] as LaunchAction).Title;
                 }
                 else if (Actions[SelectedNumber] is TextStringAction)
                 {
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Visible;
                     tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
+                    tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
                 }
                 else
                 {
-                    tbPath.Text = tbArgs.Text = "";
+                    tbTitleAction.Text = tbTitleTextString.Text = tbValue.Text = tbPath.Text = tbArgs.Text = "";
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
                 }
@@ -280,10 +284,12 @@ namespace InfinittonWPF
             {
                 tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                 tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
+                tbTitleAction.Text = (Actions[SelectedNumber] as LaunchAction).Title;
             }
             else if (Actions[SelectedNumber] is TextStringAction)
             {
                 tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
+                tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
             }
         }
 
@@ -293,13 +299,16 @@ namespace InfinittonWPF
             {
                 (Actions[SelectedNumber] as LaunchAction).ExePath = tbPath.Text;
                 (Actions[SelectedNumber] as LaunchAction).Args = tbArgs.Text;
+                (Actions[SelectedNumber] as LaunchAction).Title = tbTitleAction.Text;
                 controller.Save();
             }
             else if (Actions[SelectedNumber] is TextStringAction)
             {
                 (Actions[SelectedNumber] as TextStringAction).Value = tbValue.Text;
+                (Actions[SelectedNumber] as TextStringAction).Title = tbTitleTextString.Text;
             }
 
+            controller.LoadIcons();
         }
     }
 }

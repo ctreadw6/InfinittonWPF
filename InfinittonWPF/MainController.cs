@@ -24,7 +24,7 @@ namespace InfinittonWPF
         ConcurrentDictionary<int, IButtonPressAction> actions = new ConcurrentDictionary<int, IButtonPressAction>();
         ConcurrentDictionary<string, IButtonPressAction> allActions = new ConcurrentDictionary<string, IButtonPressAction>();
         private MainWindow mainWindow;
-        String FolderIconPath = Path.GetFullPath("Folder-Icon.png");
+
         public static String HomeIconPath = Path.GetFullPath("Home.png");
         Random random = new Random();
         
@@ -66,17 +66,12 @@ namespace InfinittonWPF
             if (!Directory.Exists("Images")) Directory.CreateDirectory("Images");
             mainWindow = _mainWindow;
 
-            //allActions.TryAdd("1", new FolderAction());
-
-            //allActions.TryAdd("1-2", new FolderAction());
-
-            //allActions.TryAdd("1-2-3", new LaunchAction() { ExePath = @"C:\Users\ctrea\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk" });
             scanner = new DeviceScanner(0xffff, 0x1f40);
             scanner.DeviceArrived += enter;
             scanner.DeviceRemoved += exit;
             scanner.StartAsyncScan();
             device = new USBDevice(0xffff, 0x1f40, null, false, 31);
-            //_ButtonDevice = HidDevices.Enumerate(0xffff, 0x1f40).FirstOrDefault();
+
             if (device == null) return;
 
             Console.WriteLine(device.GetProductString());
@@ -88,8 +83,6 @@ namespace InfinittonWPF
             // can add more handles at any time
             device.InputReportArrivedEvent += handle;
 
-            //Thread t = new Thread(ListenForButton);
-            //t.Start();
             Load();
             LoadIcons();
 
@@ -117,19 +110,24 @@ namespace InfinittonWPF
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[FolderActions]") +1;
             i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]");
 
-            for (int i = i1; i < i2; i++)
+            for (int i = i1; i < i2; i += 2)
             {
-                allActions.TryAdd(Properties.Settings.Default.ActionsSetting[i], new FolderAction());
+                var action = new FolderAction();
+                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
+                string path = Properties.Settings.Default.ActionsSetting[i];
+                allActions.TryAdd(path, action);
+                
             }
 
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]") + 1;
             i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]");
-            for (int i = i1; i < i2; i += 3)
+            for (int i = i1; i < i2; i += 4)
             {
                 var action = new LaunchAction();
                 string path = Properties.Settings.Default.ActionsSetting[i];
-                action.ExePath = Properties.Settings.Default.ActionsSetting[i + 1];
-                action.Args = Properties.Settings.Default.ActionsSetting[i + 2];
+                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
+                action.ExePath = Properties.Settings.Default.ActionsSetting[i + 2];
+                action.Args = Properties.Settings.Default.ActionsSetting[i + 3];
                 if (File.Exists("Images/" + path + ".png")) action.IconPath = "Images/" + path + ".png";
 
                 allActions.TryAdd(path, action);
@@ -137,11 +135,12 @@ namespace InfinittonWPF
 
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]") + 1;
             i2 = Properties.Settings.Default.ActionsSetting.Count;
-            for (int i = i1; i < i2; i +=2)
+            for (int i = i1; i < i2; i += 3)
             {
                 var action = new TextStringAction();
                 string path = Properties.Settings.Default.ActionsSetting[i];
-                action.Value = Properties.Settings.Default.ActionsSetting[i + 1];
+                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
+                action.Value = Properties.Settings.Default.ActionsSetting[i + 2];
                 allActions.TryAdd(Properties.Settings.Default.ActionsSetting[i], action);
             }
         }
@@ -221,6 +220,7 @@ namespace InfinittonWPF
             lock (lockObj)
             {
                 IgnoreReport = true;
+                // Randomly set button images. This sort of helps to not see the delay when setting the images.
                 List<int> randomList = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }.OrderBy(x => random.Next()).ToList();
                 var currentList = CurrentFolderDir.Reverse().ToList();
                 actions.Clear();
@@ -240,24 +240,14 @@ namespace InfinittonWPF
                             actions.TryAdd(index, new NullAction());
                         }
 
-                        BitmapSource source = null;
-                        //images[index].Dispatcher.Invoke((Action)delegate
-                        //{
-                        //    images[index].Source = actions[index].BMPImage;
-                        //});
-
-                        SendKeyFeature(index, actions[index]?.Icon);
+                        SendKeyFeature(index, actions[index]);
 
                         currentList.RemoveAt(currentList.Count - 1);
                     }
                     else
                     {
                         actions.TryAdd(index, HomeAction);
-                        //images[index].Dispatcher.Invoke((Action)delegate
-                        //{
-                        //    images[index].DataContext = actions[index];
-                        //});
-                        SendKeyFeature(index, actions[index]?.Icon);
+                        SendKeyFeature(index, actions[index]);
                     }
 
                     mainWindow.Actions[index - 1] = actions[index];
@@ -265,16 +255,6 @@ namespace InfinittonWPF
 
                 mainWindow.Refresh();
                 IgnoreReport = false;
-            }
-        }
-
-        public void Start()
-        {
-            while (true)
-            {
-                device.Read();
-                //_device.ReadReport(OnReport);
-                Thread.Sleep(10);
             }
         }
 
@@ -288,33 +268,6 @@ namespace InfinittonWPF
             }
         }
 
-        //private void OnReport(HidReport report)
-        //{
-        //    //if (!_device.IsConnected) return;
-        //    //if (report.ReadStatus != HidDeviceData.ReadStatus.Success)
-        //    //{
-
-        //    //    return;
-        //    //}
-            
-
-        //    //_device.WriteReport(report);
-        //    int val = report.Data[0] << 8 | report.Data[1];
-        //    int buttonNum = ButtonMapper.GetButtonIndex((ushort)val) + 1;
-        //    PerformAction(buttonNum);
-        //}
-
-        private void DeviceRemovedHandler()
-        {
-            Console.WriteLine("Removed");
-        }
-
-        private void DeviceAttachedHandler()
-        {
-            Console.WriteLine("Attached");
-            //_device.ReadReport(OnReport);
-        }
-
         public void SetDeviceBrightness(int val)
         {
             //lock (lockObj)
@@ -325,15 +278,7 @@ namespace InfinittonWPF
             }
         }
 
-        public void SendKeyFeature(int key, String path)
-        {
-            if (File.Exists(path))
-            {
-                SendKeyFeature(key, Bitmap.FromFile(path));
-            }
-        }
-
-        public void SendKeyFeature(int key, System.Drawing.Image image = null)
+        public void SendKeyFeature(int key, IButtonPressAction action)
         {
             int numTimes = 3;
             //lock (lockObj)
@@ -342,7 +287,7 @@ namespace InfinittonWPF
                 byte[] buf;
 
 
-                buf = PictureConverter.GetBuffer(image);
+                buf = PictureConverter.GetBuffer(action);
                 device.Write(buf.Take(8017).ToArray());
                 device.Write(buf.Skip(8017).ToArray());
 

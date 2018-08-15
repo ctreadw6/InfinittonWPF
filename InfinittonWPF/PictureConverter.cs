@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Brushes = System.Drawing.Brushes;
 
 namespace InfinittonWPF
 {
@@ -31,7 +33,12 @@ namespace InfinittonWPF
             return GetBuffer(Bitmap.FromFile(path));
         }
 
-        public static byte[] GetBuffer(Image image)
+        public static byte[] GetBuffer(IButtonPressAction action)
+        {
+            return GetBuffer(action.Icon, action.Title);
+        }
+
+        public static byte[] GetBuffer(Image image, string title = null)
         {
             if (image == null)
             {
@@ -43,6 +50,23 @@ namespace InfinittonWPF
             }
 
             Bitmap bmp = ResizeImage(image, 72, 72);
+
+            RectangleF rectf = new RectangleF(5, 50, 62, 15);
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.DrawString(title, new Font("Tahoma", 9), Brushes.White, rectf);
+
+                    g.Flush();
+                }
+            }
+
             List<byte> imageBuf = new List<byte>(72 * 72 * 3);
             
             for (int i = 0; i < 72 * 72; i++)
