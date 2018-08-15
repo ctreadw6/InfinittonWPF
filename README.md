@@ -9,6 +9,7 @@ Send Text String
 
 <br/><br/>
 Improvements on Infinitton's software:<br/><br/>
+Auto Dim when your computer is locked/sleeping. Restore when you unlock/wake up<br/><br/>
 Folders:<br/>
 Folders inside Folders inside Folders<br/><br/>
 Launch EXE:<br/>
