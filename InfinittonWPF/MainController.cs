@@ -239,7 +239,7 @@ namespace InfinittonWPF
                 fullPath = fullPath.Trim(new[] { '-' });
                 string path = System.IO.Path.Combine("Images", fullPath + ".png");
 
-                File.Copy(copyFromPath, path);
+                File.Copy(copyFromPath, path, true);
                 IButtonPressAction action;
                 if (allActions.ContainsKey(fullPath) && allActions.TryGetValue(fullPath, out action) && action.GetType() != typeof(NullAction))
                 {

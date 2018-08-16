@@ -120,6 +120,10 @@
       <Project>{30432d4a-0128-48e7-adcd-249d70323611}</Project>
       <Name>USBInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IconExtractor\IconExtractor\IconExtractor.csproj">
+      <Project>{fdfd4eeb-c202-4d93-a6e9-d8984a12d014}</Project>
+      <Name>IconExtractor</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Folder-icon.png">

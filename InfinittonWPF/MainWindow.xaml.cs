@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,10 +12,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TsudaKageyu;
+using Brushes = System.Windows.Media.Brushes;
+using Image = System.Windows.Controls.Image;
 
 namespace InfinittonWPF
 {
@@ -300,12 +303,68 @@ namespace InfinittonWPF
             }
         }
 
+        public Icon GetBestIcon(String path)
+        {
+            IconExtractor ie = new IconExtractor(path);
+            string fileName = ie.FileName;
+            int iconCount = ie.Count;
+            if (iconCount > 0)
+            {
+                Icon[] allIcons = ie.GetAllIcons();
+                Icon ret = null;
+                foreach (var icon in allIcons)
+                {
+                    Icon[] splitIcons = IconUtil.Split(icon);
+                    Icon biggestIcon = splitIcons.OrderBy(x => x.Size.Height).Last();
+                    if (ret == null || biggestIcon.Height > ret.Height) ret = biggestIcon;
+                }
+
+                return ret;
+            }
+
+            return null;
+        }
+
+        public static string FindExePath(string exe)
+        {
+            exe = exe.Trim(new[] {'"'});
+            exe = Environment.ExpandEnvironmentVariables(exe);
+            if (!File.Exists(exe))
+            {
+                if (System.IO.Path.GetDirectoryName(exe) == String.Empty)
+                {
+                    foreach (string test in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';'))
+                    {
+                        string path = test.Trim();
+                        if (!String.IsNullOrEmpty(path) && File.Exists(path = System.IO.Path.Combine(path, exe)))
+                            return System.IO.Path.GetFullPath(path);
+                    }
+                }
+
+                return exe;
+            }
+            return System.IO.Path.GetFullPath(exe);
+        }
 
         private void saveButtonClick(object sender, RoutedEventArgs e)
         {
             if (Actions[SelectedNumber] is LaunchAction)
             {
-                (Actions[SelectedNumber] as LaunchAction).ExePath = tbPath.Text;
+                var fullPath = FindExePath(tbPath.Text);
+                if (File.Exists(fullPath) && fullPath != (Actions[SelectedNumber] as LaunchAction).ExePath)
+                {
+                    var icon = GetBestIcon(fullPath);
+                    if (icon != null)
+                    {
+                        //Bitmap bitmap = IconUtil.ToBitmap(icon);
+                        Bitmap bitmap = icon.ToBitmap();
+                        bitmap.Save("Temp.png");
+                        controller.AddImage(SelectedNumber + 1, "Temp.png");
+
+                    }
+                }
+
+                (Actions[SelectedNumber] as LaunchAction).ExePath = fullPath;
                 (Actions[SelectedNumber] as LaunchAction).Args = tbArgs.Text;
                 (Actions[SelectedNumber] as LaunchAction).Title = tbTitleAction.Text;
                 var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
