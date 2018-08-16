@@ -14,5 +14,6 @@ Folders:<br/>
 Folders inside Folders inside Folders<br/><br/>
 Launch EXE:<br/>
 Launching EXE can now take arguments<br/>
+Automatically retreive icons from exe files<br/>
 When launching an EXE, you can take different actions if the application is already running: Kill the old process, focus the old process, start a new process<br/>
 
