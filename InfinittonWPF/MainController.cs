@@ -364,5 +364,11 @@ namespace InfinittonWPF
                 }
             }
         }
+
+        internal void Kill()
+        {
+            scanner.StopAsyncScan();
+            device.StopAsyncRead();
+        }
     }
 }

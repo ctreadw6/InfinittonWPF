@@ -11,12 +11,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TsudaKageyu;
+using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
+using DataFormats = System.Windows.DataFormats;
+using DragDropEffects = System.Windows.DragDropEffects;
+using DragEventArgs = System.Windows.DragEventArgs;
 using Image = System.Windows.Controls.Image;
 
 namespace InfinittonWPF
@@ -154,6 +159,7 @@ namespace InfinittonWPF
         }
 
         private MainController controller;
+        private System.Windows.Forms.NotifyIcon notifyIcon = null;
 
         public MainWindow()
         {
@@ -214,14 +220,6 @@ namespace InfinittonWPF
             }
         }
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            brightnessSlider.Value = Properties.Settings.Default.Brightness;
-            controller = new MainController(this);
-            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.NewProcess.ToString());
-            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.FocusOldProcess.ToString());
-            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.KillOldProcess.ToString());
-        }
 
         private void ImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -379,6 +377,51 @@ namespace InfinittonWPF
             }
 
             controller.LoadIcons();
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+            this.ShowInTaskbar = false;
+            e.Cancel = true;
+        }
+
+        public void BringToFront()
+        {
+            this.Show();
+            this.ShowInTaskbar = true;
+            this.WindowState = WindowState.Normal;
+            this.BringIntoView();
+            this.Activate();
+        }
+
+        private void notifyIcon_Click(object sender, EventArgs e)
+        {
+            BringToFront();
+        }
+
+
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            notifyIcon = new System.Windows.Forms.NotifyIcon();
+            notifyIcon.Click += notifyIcon_Click;
+            var mI = new System.Windows.Forms.MenuItem("Exit Infinitton WPF");
+            mI.Click += MenuItem_OnClick;
+            notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(new []{ mI });
+            notifyIcon.Icon = new System.Drawing.Icon("Icon16.ico");
+            notifyIcon.Visible = true;
+            brightnessSlider.Value = Properties.Settings.Default.Brightness;
+            controller = new MainController(this);
+            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.NewProcess.ToString());
+            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.FocusOldProcess.ToString());
+            tbNewProcessAction.Items.Add(LaunchAction.ProcessRunningAction.KillOldProcess.ToString());
+        }
+
+        private void MenuItem_OnClick(object sender, EventArgs e)
+        {
+            controller.Kill();
+            
+            Application.Current.Shutdown();
         }
     }
 }

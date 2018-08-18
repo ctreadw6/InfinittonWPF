@@ -14,7 +14,9 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Loaded="MainWindow_OnLoaded"
-        Title="MainWindow" Height="530.447" Width="775.968">
+        Closing="MainWindow_OnClosing"
+        Title="MainWindow" Height="530.447" Width="775.968" Icon="Icon.ico" xmlns:tb="http://www.hardcodet.net/taskbar">
+
     <Window.Resources>
         <Style x:Key="myBorderStyle" TargetType="Border">
             <Setter Property="BorderBrush" Value="DarkGray"></Setter>
@@ -32,7 +34,9 @@
         </Style>
         <local:PathToImageConverter x:Key="myImageConverter"></local:PathToImageConverter>
     </Window.Resources>
+
     <Grid>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -164,6 +168,7 @@
                 </DockPanel>
             </StackPanel>
         </Grid>
+        
     </Grid>
 </Window>
 
