@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Shell;
-using Squirrel;
 
 namespace InfinittonWPF
 {
@@ -25,24 +25,30 @@ namespace InfinittonWPF
             {
                 var application = new App();
                 application.InitializeComponent();
+                
                 application.Run();
 
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
             }
 
-             CheckUpdate();
+             
         }
 
-        public static async Task CheckUpdate()
-        {
-            using (var mgr = new UpdateManager("Releases"))
-            {
-                await mgr.UpdateApp().ConfigureAwait(false);
-            }
-        }
+        //public static void CreateShortcut()
+        //{
+        //    string fileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+        //    using (ShellLink shortcut = new ShellLink())
+        //    {
+        //        shortcut.Target = fileName;
+        //        shortcut.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();
+        //        shortcut.Description = "Infinitton WPF";
+        //        shortcut.DisplayMode = ShellLink.LinkDisplayMode.edmNormal;
+        //        shortcut.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "InfinittonWPF.lnk"));
+        //    }
+        //}
 
-        #region ISingleInstanceApp Members
+#region ISingleInstanceApp Members
         public bool SignalExternalCommandLineArgs(IList<string> args)
         {
             // Bring window to foreground
@@ -55,6 +61,6 @@ namespace InfinittonWPF
 
             return true;
         }
-        #endregion
+#endregion
     }
 }

@@ -1,1 +1,0 @@
-start ../../../packages\squirrel.windows.1.8.0\tools\Squirrel.exe --releasify InfinittonWPF.1.0.0.nupkg

@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using WindowsInput;
+using InfinittonWPF.Properties;
 using Microsoft.Win32;
 using USBInterface;
 
@@ -163,8 +164,8 @@ namespace InfinittonWPF
             for (int i = i1; i < i2; i += 2)
             {
                 var action = new FolderAction();
-                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
                 string path = Properties.Settings.Default.ActionsSetting[i];
+                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
                 allActions.TryAdd(path, action);
                 
             }
@@ -205,6 +206,7 @@ namespace InfinittonWPF
             foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(FolderAction)))
             {
                 setting.Add(kvp.Key);
+                setting.Add(kvp.Value.Title);
             }
 
             setting.Add("[LaunchAction]");
@@ -317,11 +319,18 @@ namespace InfinittonWPF
 
         public void PerformAction(int button)
         {
-            if (button > 0)
+            try
             {
-                if (actions[button] != null)
-                    actions[button].DoStuff(this, button);
-                //_device.ReadFeatureData(out buf, 1);
+                if (button > 0 && actions.ContainsKey(button))
+                {
+                    if (actions[button] != null)
+                        actions[button].DoStuff(this, button);
+                    //_device.ReadFeatureData(out buf, 1);
+                }
+            }
+            catch
+            {
+                // todo show some sort of alert here.
             }
         }
 
@@ -367,8 +376,8 @@ namespace InfinittonWPF
 
         internal void Kill()
         {
-            scanner.StopAsyncScan();
-            device.StopAsyncRead();
+            scanner?.StopAsyncScan();
+            device?.StopAsyncRead();
         }
     }
 }

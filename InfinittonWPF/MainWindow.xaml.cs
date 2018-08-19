@@ -325,7 +325,8 @@ namespace InfinittonWPF
 
         public static string FindExePath(string exe)
         {
-            exe = exe.Trim(new[] {'"'});
+            exe = exe.Trim(new[] {'"', ' '});
+            if (string.IsNullOrEmpty(exe)) return "";
             exe = Environment.ExpandEnvironmentVariables(exe);
             if (!File.Exists(exe))
             {
@@ -419,8 +420,16 @@ namespace InfinittonWPF
 
         private void MenuItem_OnClick(object sender, EventArgs e)
         {
-            controller.Kill();
-            
+            try
+            {
+                controller?.Kill();
+            }
+            catch
+            {
+
+            }
+
+
             Application.Current.Shutdown();
         }
     }
