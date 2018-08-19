@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Shell;
+using Squirrel;
 
 namespace InfinittonWPF
 {
@@ -28,6 +29,16 @@ namespace InfinittonWPF
 
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
+            }
+
+             CheckUpdate();
+        }
+
+        public static async Task CheckUpdate()
+        {
+            using (var mgr = new UpdateManager("Releases"))
+            {
+                await mgr.UpdateApp().ConfigureAwait(false);
             }
         }
 
