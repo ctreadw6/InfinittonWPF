@@ -303,6 +303,7 @@ namespace InfinittonWPF
 
         public Icon GetBestIcon(String path)
         {
+            if (!path.EndsWith(".exe") && !path.EndsWith(".dll")) return null;
             IconExtractor ie = new IconExtractor(path);
             string fileName = ie.FileName;
             int iconCount = ie.Count;

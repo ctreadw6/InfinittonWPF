@@ -15,7 +15,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Loaded="MainWindow_OnLoaded"
         Closing="MainWindow_OnClosing"
-        Title="MainWindow" Height="530.447" Width="775.968" Icon="Icon.ico" xmlns:tb="http://www.hardcodet.net/taskbar">
+        Title="Infinitton WPF - Device Disconnected" Height="530.447" Width="775.968" Icon="Icon.ico" xmlns:tb="http://www.hardcodet.net/taskbar">
 
     <Window.Resources>
         <Style x:Key="myBorderStyle" TargetType="Border">

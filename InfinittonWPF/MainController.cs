@@ -80,6 +80,8 @@ namespace InfinittonWPF
 
             if (device == null) return;
 
+            mainWindow?.Dispatcher.Invoke(() => { mainWindow.Title = "Infinitton WPF - Device Connected"; });
+
             Console.WriteLine(device.GetProductString());
 
             // add handle for data read
@@ -95,6 +97,7 @@ namespace InfinittonWPF
         public void exit(object s, EventArgs a)
         {
             device = null;
+            mainWindow?.Dispatcher.Invoke(() => { mainWindow.Title = "Infinitton WPF - Device Disconnected"; });
         }
 
         public MainController(MainWindow _mainWindow)
