@@ -19,6 +19,8 @@ namespace InfinittonWPF
         {
             controller.ChangeFolder(buttonNum);
         }
+
+        public String ExeConditionName { get; set; }
     }
 
     public class HomeFolderAction : FolderAction

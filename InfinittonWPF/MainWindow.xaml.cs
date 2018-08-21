@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -160,6 +162,7 @@ namespace InfinittonWPF
 
         private MainController controller;
         private System.Windows.Forms.NotifyIcon notifyIcon = null;
+        private WinEventDelegate dele;
 
         public MainWindow()
         {
@@ -169,7 +172,9 @@ namespace InfinittonWPF
             }
             InitializeComponent();
             this.DataContext = this;
-            
+            dele = new WinEventDelegate(WinEventProc);
+            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+
         }
 
         private void actionImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -252,6 +257,7 @@ namespace InfinittonWPF
                 if (Actions[SelectedNumber] is LaunchAction)
                 {
                     LaunchActionPanel.Visibility = Visibility.Visible;
+                    FolderActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
                     tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                     tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
@@ -262,9 +268,18 @@ namespace InfinittonWPF
                 else if (Actions[SelectedNumber] is TextStringAction)
                 {
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
+                    FolderActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Visible;
                     tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
                     tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
+                }
+                else if (Actions[SelectedNumber] is FolderAction)
+                {
+                    LaunchActionPanel.Visibility = Visibility.Collapsed;
+                    FolderActionPanel.Visibility = Visibility.Visible;
+                    TextStringActionPanel.Visibility = Visibility.Collapsed;
+                    tbFolderCondition.Text = (Actions[SelectedNumber] as FolderAction).ExeConditionName;
+                    tbTitleTextString.Text = (Actions[SelectedNumber] as FolderAction).Title;
                 }
                 else
                 {
@@ -298,6 +313,11 @@ namespace InfinittonWPF
             {
                 tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
                 tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
+            }
+            else if (Actions[SelectedNumber] is FolderAction)
+            {
+                tbFolderCondition.Text = (Actions[SelectedNumber] as FolderAction).ExeConditionName;
+                tbTitleTextString.Text = (Actions[SelectedNumber] as FolderAction).Title;
             }
         }
 
@@ -377,7 +397,12 @@ namespace InfinittonWPF
                 (Actions[SelectedNumber] as TextStringAction).Value = tbValue.Text;
                 (Actions[SelectedNumber] as TextStringAction).Title = tbTitleTextString.Text;
             }
-
+            else if (Actions[SelectedNumber] is FolderAction)
+            {
+                (Actions[SelectedNumber] as FolderAction).ExeConditionName = tbFolderCondition.Text;
+                (Actions[SelectedNumber] as FolderAction).Title = tbTitleTextString.Text;
+            }
+            controller.Save();
             controller.LoadIcons();
         }
 
@@ -432,6 +457,56 @@ namespace InfinittonWPF
 
 
             Application.Current.Shutdown();
+        }
+
+
+
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+        private const uint WINEVENT_OUTOFCONTEXT = 0;
+        private const uint EVENT_SYSTEM_FOREGROUND = 3;
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
+        private string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            IntPtr handle = IntPtr.Zero;
+            StringBuilder Buff = new StringBuilder(nChars);
+            handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+
+        public void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            try
+            {
+                if (hwnd == IntPtr.Zero) return;
+                uint pid;
+                GetWindowThreadProcessId(hwnd, out pid);
+                var process = Process.GetProcessById((int) pid);
+                controller?.ProcessAppSwitchedFocus(process.ProcessName);
+                Console.WriteLine("Switched to process: " + process.ProcessName);
+            }
+            catch
+            {
+
+            }
         }
     }
 }

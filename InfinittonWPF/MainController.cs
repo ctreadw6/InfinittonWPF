@@ -156,6 +156,16 @@ namespace InfinittonWPF
             LoadIcons();
         }
 
+        public void ChangeFolder(String absolutePath)
+        {
+            CurrentFolderDir.Clear();
+            foreach (var dir in absolutePath.Split(new[] {'-'}))
+            {
+                CurrentFolderDir.Push(int.Parse(dir));
+            }
+            LoadIcons();
+        }
+
         public void Load()
         {
             int i1, i2;
@@ -164,11 +174,12 @@ namespace InfinittonWPF
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[FolderActions]") +1;
             i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]");
 
-            for (int i = i1; i < i2; i += 2)
+            for (int i = i1; i < i2; i += 3)
             {
                 var action = new FolderAction();
                 string path = Properties.Settings.Default.ActionsSetting[i];
                 action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
+                action.ExeConditionName = Properties.Settings.Default.ActionsSetting[i + 2];
                 allActions.TryAdd(path, action);
                 
             }
@@ -208,8 +219,10 @@ namespace InfinittonWPF
             setting.Add("[FolderActions]");
             foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(FolderAction)))
             {
+                var action = kvp.Value as FolderAction;
                 setting.Add(kvp.Key);
-                setting.Add(kvp.Value.Title);
+                setting.Add(action.Title);
+                setting.Add(action.ExeConditionName ?? "");
             }
 
             setting.Add("[LaunchAction]");
@@ -381,6 +394,17 @@ namespace InfinittonWPF
         {
             scanner?.StopAsyncScan();
             device?.StopAsyncRead();
+        }
+
+        public void ProcessAppSwitchedFocus(String processName)
+        {
+            foreach (var kvp in allActions)
+            {
+                if (kvp.Value is FolderAction && (((FolderAction)kvp.Value).ExeConditionName == processName || Path.GetFileNameWithoutExtension(((FolderAction)kvp.Value).ExeConditionName) == processName))
+                {
+                    ChangeFolder(kvp.Key);
+                }
+            }
         }
     }
 }
