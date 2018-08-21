@@ -508,5 +508,19 @@ namespace InfinittonWPF
 
             }
         }
+
+        private void ImageKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                if (Actions[SelectedNumber] is NullAction) return;
+
+                Actions[SelectedNumber] = new NullAction();
+                controller.AddAction(SelectedNumber + 1, Actions[SelectedNumber]);
+                Notify("Action" + SelectedNumber.ToString());
+            }
+
+            
+        }
     }
 }

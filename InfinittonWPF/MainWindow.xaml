@@ -15,6 +15,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Loaded="MainWindow_OnLoaded"
         Closing="MainWindow_OnClosing"
+        KeyDown="ImageKeyDown"
         Title="Infinitton WPF - Device Disconnected" Height="530.447" Width="775.968" Icon="Icon.ico" xmlns:tb="http://www.hardcodet.net/taskbar">
 
     <Window.Resources>
@@ -28,6 +29,7 @@
             <Setter Property="StretchDirection" Value="Both"></Setter>
             <EventSetter Event="Drop" Handler="imageDrop" />
             <EventSetter Event="MouseLeftButtonDown" Handler="ImageMouseLeftButtonDown"></EventSetter>
+            <EventSetter Event="PreviewKeyDown" Handler="ImageKeyDown" />
         </Style>
         <Style x:Key="myActionImageStyle" TargetType="Image">
             <EventSetter Event="MouseLeftButtonDown" Handler="actionImageMouseLeftButtonDown"></EventSetter>
