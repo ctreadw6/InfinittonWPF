@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -25,6 +21,7 @@ namespace InfinittonWPF
                     image.CacheOption = BitmapCacheOption.OnLoad;
                     image.EndInit(); // load the image from the stream
                 } // close the stream
+
                 return image;
             }
 
@@ -36,4 +33,5 @@ namespace InfinittonWPF
             throw new NotImplementedException();
         }
     }
+
 }

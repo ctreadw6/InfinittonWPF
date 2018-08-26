@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,16 +16,19 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TsudaKageyu;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
+using ContextMenu = System.Windows.Controls.ContextMenu;
 using DataFormats = System.Windows.DataFormats;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
 using Image = System.Windows.Controls.Image;
+using MenuItem = System.Windows.Controls.MenuItem;
 
 namespace InfinittonWPF
 {
@@ -46,6 +50,11 @@ namespace InfinittonWPF
         public String TextStringActionPath
         {
             get { return "textStringIcon.png"; }
+        }
+
+        public String VersionString
+        {
+            get { return "Version: " + Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
         }
 
         public int SelectedNumber = -1;
@@ -73,91 +82,151 @@ namespace InfinittonWPF
         public String Action0
         {
             get { return Actions[0].IconPath; }
-            set { Actions[0].IconPath = value; Notify("Action0");}
+            set
+            {
+                Actions[0].IconPath = value;
+                Notify("Action0");
+            }
         }
 
         public String Action1
         {
             get { return Actions[1].IconPath; }
-            set { Actions[1].IconPath = value; Notify("Action1"); }
+            set
+            {
+                Actions[1].IconPath = value;
+                Notify("Action1");
+            }
         }
 
         public String Action2
         {
             get { return Actions[2].IconPath; }
-            set { Actions[2].IconPath = value; Notify("Action2"); }
+            set
+            {
+                Actions[2].IconPath = value;
+                Notify("Action2");
+            }
         }
 
         public String Action3
         {
             get { return Actions[3].IconPath; }
-            set { Actions[3].IconPath = value; Notify("Action3"); }
+            set
+            {
+                Actions[3].IconPath = value;
+                Notify("Action3");
+            }
         }
 
         public String Action4
         {
             get { return Actions[4].IconPath; }
-            set { Actions[4].IconPath = value; Notify("Action4"); }
+            set
+            {
+                Actions[4].IconPath = value;
+                Notify("Action4");
+            }
         }
 
         public String Action5
         {
             get { return Actions[5].IconPath; }
-            set { Actions[5].IconPath = value; Notify("Action5"); }
+            set
+            {
+                Actions[5].IconPath = value;
+                Notify("Action5");
+            }
         }
 
         public String Action6
         {
             get { return Actions[6].IconPath; }
-            set { Actions[6].IconPath = value; Notify("Action6"); }
+            set
+            {
+                Actions[6].IconPath = value;
+                Notify("Action6");
+            }
         }
 
         public String Action7
         {
             get { return Actions[7].IconPath; }
-            set { Actions[7].IconPath = value; Notify("Action7"); }
+            set
+            {
+                Actions[7].IconPath = value;
+                Notify("Action7");
+            }
         }
 
         public String Action8
         {
             get { return Actions[8].IconPath; }
-            set { Actions[8].IconPath = value; Notify("Action8"); }
+            set
+            {
+                Actions[8].IconPath = value;
+                Notify("Action8");
+            }
         }
 
         public String Action9
         {
             get { return Actions[9].IconPath; }
-            set { Actions[9].IconPath = value; Notify("Action9"); }
+            set
+            {
+                Actions[9].IconPath = value;
+                Notify("Action9");
+            }
         }
 
         public String Action10
         {
             get { return Actions[10].IconPath; }
-            set { Actions[10].IconPath = value; Notify("Action10"); }
+            set
+            {
+                Actions[10].IconPath = value;
+                Notify("Action10");
+            }
         }
 
         public String Action11
         {
             get { return Actions[11].IconPath; }
-            set { Actions[11].IconPath = value; Notify("Action11"); }
+            set
+            {
+                Actions[11].IconPath = value;
+                Notify("Action11");
+            }
         }
 
         public String Action12
         {
             get { return Actions[12].IconPath; }
-            set { Actions[12].IconPath = value; Notify("Action12"); }
+            set
+            {
+                Actions[12].IconPath = value;
+                Notify("Action12");
+            }
         }
 
         public String Action13
         {
             get { return Actions[13].IconPath; }
-            set { Actions[13].IconPath = value; Notify("Action13"); }
+            set
+            {
+                Actions[13].IconPath = value;
+                Notify("Action13");
+            }
         }
 
         public String Action14
         {
             get { return Actions[14].IconPath; }
-            set { Actions[14].IconPath = value; Notify("Action14"); }
+            set
+            {
+                Actions[14].IconPath = value;
+                Notify("Action14");
+            }
         }
 
         private MainController controller;
@@ -170,10 +239,12 @@ namespace InfinittonWPF
             {
                 _Actions.Add(new NullAction());
             }
+
             InitializeComponent();
             this.DataContext = this;
             dele = new WinEventDelegate(WinEventProc);
-            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0,
+                WINEVENT_OUTOFCONTEXT);
 
         }
 
@@ -185,7 +256,7 @@ namespace InfinittonWPF
 
         private void imageDrop(object sender, DragEventArgs e)
         {
-            Image imageControl = (Image)sender;
+            Image imageControl = (Image) sender;
             int imageNum = int.Parse(imageControl.Tag as String);
             if ((e.Data.GetData(typeof(String)) != null))
             {
@@ -202,12 +273,13 @@ namespace InfinittonWPF
                         Actions[imageNum] = new TextStringAction();
                         break;
                 }
+
                 controller.AddAction(imageNum + 1, Actions[imageNum]);
                 Notify("Action" + imageNum.ToString());
             }
             else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
                 if (File.Exists(files[0]))
                 {
                     Actions[imageNum].IconPath = files[0];
@@ -230,19 +302,20 @@ namespace InfinittonWPF
         {
             if (e.ClickCount == 2)
             {
-                Image imageControl = (Image)sender;
+                Image imageControl = (Image) sender;
                 int imageNum = int.Parse(imageControl.Tag as String);
                 controller.PerformAction(imageNum + 1);
             }
             else if (e.ClickCount == 1)
             {
-                Image imageControl = (Image)sender;
+                Image imageControl = (Image) sender;
                 int imageNum = int.Parse(imageControl.Tag as String);
                 if (SelectedNumber == imageNum)
                 {
-                    
+
                     return;
                 }
+
                 SelectedNumber = imageNum;
                 Border parentBorder = imageControl.Parent as Border;
                 if (parentBorder == null) return;
@@ -363,6 +436,7 @@ namespace InfinittonWPF
 
                 return exe;
             }
+
             return System.IO.Path.GetFullPath(exe);
         }
 
@@ -402,8 +476,42 @@ namespace InfinittonWPF
                 (Actions[SelectedNumber] as FolderAction).ExeConditionName = tbFolderCondition.Text;
                 (Actions[SelectedNumber] as FolderAction).Title = tbTitleTextString.Text;
             }
+
             controller.Save();
             controller.LoadIcons();
+        }
+
+
+        private void PathButtonClick(object sender, RoutedEventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.DefaultExt = ".exe";
+                ofd.Filter = "Exe files (*.exe, *.bat, *.lnk) | *.exe; *.bat; *.lnk";
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    if (Actions[SelectedNumber] is LaunchAction)
+                    {
+                        var fullPath = ofd.FileName;
+                        if (File.Exists(fullPath) && fullPath != (Actions[SelectedNumber] as LaunchAction).ExePath)
+                        {
+                            var icon = GetBestIcon(fullPath);
+                            if (icon != null)
+                            {
+                                //Bitmap bitmap = IconUtil.ToBitmap(icon);
+                                Bitmap bitmap = icon.ToBitmap();
+                                bitmap.Save("Temp.png");
+                                controller.AddImage(SelectedNumber + 1, "Temp.png");
+
+                            }
+                        }
+
+                        tbPath.Text = fullPath;
+                        (Actions[SelectedNumber] as LaunchAction).ExePath = fullPath;
+                        controller.Save();
+                    }
+                }
+            }
         }
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
@@ -434,7 +542,7 @@ namespace InfinittonWPF
             notifyIcon.Click += notifyIcon_Click;
             var mI = new System.Windows.Forms.MenuItem("Exit Infinitton WPF");
             mI.Click += MenuItem_OnClick;
-            notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(new []{ mI });
+            notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(new[] {mI});
             notifyIcon.Icon = new System.Drawing.Icon("Icon16.ico");
             notifyIcon.Visible = true;
             brightnessSlider.Value = Properties.Settings.Default.Brightness;
@@ -461,10 +569,12 @@ namespace InfinittonWPF
 
 
 
-        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild,
+            uint dwEventThread, uint dwmsEventTime);
 
         [DllImport("user32.dll")]
-        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc,
+            WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
@@ -489,10 +599,12 @@ namespace InfinittonWPF
             {
                 return Buff.ToString();
             }
+
             return null;
         }
 
-        public void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        public void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild,
+            uint dwEventThread, uint dwmsEventTime)
         {
             try
             {
@@ -520,7 +632,42 @@ namespace InfinittonWPF
                 Notify("Action" + SelectedNumber.ToString());
             }
 
-            
+
+        }
+
+        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+
+        private void MenuButtonClick(object sender, RoutedEventArgs e)
+        {
+            MainDrawer.IsLeftDrawerOpen = !MainDrawer.IsLeftDrawerOpen;
+        }
+
+        private void deleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            MenuItem mi = sender as MenuItem;
+            if (mi != null)
+            {
+                ContextMenu cm = mi.Parent as ContextMenu;
+                if (cm != null)
+                {
+                    Image g = cm.PlacementTarget as Image;
+                    if (g != null)
+                    {
+                        int num = int.Parse(g.Tag.ToString());
+                        if (Actions[num] is NullAction) return;
+
+                        Actions[num] = new NullAction();
+                        controller.AddAction(num + 1, Actions[num]);
+                        Notify("Action" + num.ToString());
+                    }
+                }
+            }
+
+
         }
     }
 }
