@@ -14,7 +14,7 @@ namespace InfinittonWPF
     public class HotkeyAction  : IButtonPressAction
     {
         public List<VirtualKeyCode> Modifiers = new List<VirtualKeyCode>();
-        public VirtualKeyCode MainKey = VirtualKeyCode.VK_A;
+        public VirtualKeyCode MainKey = (VirtualKeyCode)0;
         InputSimulator sim = new InputSimulator();
 
         public override void DoStuff(MainController controller, int buttonNum)

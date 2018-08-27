@@ -372,7 +372,7 @@ namespace InfinittonWPF
                     FolderActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
                     HotkeyActionPanel.Visibility = Visibility.Visible;
-                    tbValueHotkey.Text = (Actions[SelectedNumber] is HotkeyAction).ToString();
+                    tbValueHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).ToString();
                     Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
                     MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
                 }
@@ -418,6 +418,7 @@ namespace InfinittonWPF
             else if (Actions[SelectedNumber] is HotkeyAction)
             {
                 tbValueHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).ToString();
+                tbTitleHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).Title;
                 Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
                 MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
             }
@@ -509,6 +510,7 @@ namespace InfinittonWPF
             {
                 (Actions[SelectedNumber] as HotkeyAction).MainKey = MainKey;
                 (Actions[SelectedNumber] as HotkeyAction).Modifiers = Modifiers;
+                (Actions[SelectedNumber] as HotkeyAction).Title = tbTitleHotkey.Text;
             }
 
             controller.Save();
@@ -591,17 +593,7 @@ namespace InfinittonWPF
 
         private void MenuItem_OnClick(object sender, EventArgs e)
         {
-            try
-            {
-                controller?.Kill();
-            }
-            catch
-            {
-
-            }
-
-
-            Application.Current.Shutdown();
+            Exit();
         }
 
 
@@ -732,6 +724,26 @@ namespace InfinittonWPF
 
             tbValueHotkey.Text = Utils.GetKeysString(Modifiers, MainKey);
             e.Handled = true;
+        }
+
+        public void Exit()
+        {
+            try
+            {
+                controller?.Kill();
+            }
+            catch
+            {
+
+            }
+
+
+            Application.Current.Shutdown();
+        }
+
+        private void exitButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Exit();
         }
     }
 }

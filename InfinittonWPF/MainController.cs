@@ -14,6 +14,7 @@ using WindowsInput;
 using InfinittonWPF.Properties;
 using Microsoft.Win32;
 using USBInterface;
+using WindowsInput.Native;
 
 namespace InfinittonWPF
 {
@@ -90,6 +91,8 @@ namespace InfinittonWPF
             device.StartAsyncRead();
             // can add more handles at any time
             device.InputReportArrivedEvent += handle;
+
+            SetDeviceBrightness(Properties.Settings.Default.Brightness);
 
             Load();
             LoadIcons();
@@ -202,13 +205,32 @@ namespace InfinittonWPF
             }
 
             i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]") + 1;
-            i2 = Properties.Settings.Default.ActionsSetting.Count;
+            i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[HotkeyActions]");
             for (int i = i1; i < i2; i += 3)
             {
                 var action = new TextStringAction();
                 string path = Properties.Settings.Default.ActionsSetting[i];
                 action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
                 action.Value = Properties.Settings.Default.ActionsSetting[i + 2];
+                allActions.TryAdd(path, action);
+            }
+
+            i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[HotkeyActions]") + 1;
+            i2 = Properties.Settings.Default.ActionsSetting.Count;
+            for (int i = i1; i < i2; i += 6)
+            {
+                var action = new HotkeyAction();
+                string path = Properties.Settings.Default.ActionsSetting[i];
+                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
+                for (int j = 2; j < 5; j++)
+                {
+                    VirtualKeyCode key = (VirtualKeyCode)int.Parse(Properties.Settings.Default.ActionsSetting[i + j]);
+                    if (key != 0)
+                        action.Modifiers.Add(key);
+                }
+                action.MainKey = (VirtualKeyCode)int.Parse(Properties.Settings.Default.ActionsSetting[i + 5]);
+
+
                 allActions.TryAdd(path, action);
             }
         }
@@ -243,6 +265,27 @@ namespace InfinittonWPF
                 setting.Add(kvp.Key);
                 setting.Add(action?.Title);
                 setting.Add(action?.Value);
+            }
+
+            setting.Add("[HotkeyActions]");
+            foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(HotkeyAction)))
+            {
+                var action = kvp.Value as HotkeyAction;
+                setting.Add(kvp.Key);
+                setting.Add(action?.Title);
+                for (int i = 0; i < 3; i++)
+                {
+                    if (action?.Modifiers.Count > i)
+                    {
+                        setting.Add(((int)action?.Modifiers[i]).ToString());
+                    }
+                    else
+                    {
+                        setting.Add("0");
+                    }
+                }
+                setting.Add(((int)action?.MainKey).ToString());
+                
             }
 
             Properties.Settings.Default.ActionsSetting = setting;

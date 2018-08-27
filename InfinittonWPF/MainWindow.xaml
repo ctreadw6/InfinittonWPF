@@ -43,6 +43,10 @@
     <wpf:DrawerHost IsLeftDrawerOpen="False" x:Name="MainDrawer">
         <wpf:DrawerHost.LeftDrawerContent>
             <Grid Width="200">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
                 <StackPanel>
                     <Button Click="MenuButtonClick">
                         <Button.Content>
@@ -53,7 +57,9 @@
                         <Hyperlink NavigateUri="https://github.com/ctreadw6/InfinittonWPF" RequestNavigate="Hyperlink_OnRequestNavigate">Open Github Repository</Hyperlink>
                     </TextBlock>
                     <TextBlock HorizontalAlignment="Center" Text="{Binding VersionString}"></TextBlock>
+
                 </StackPanel>
+                <Button Grid.Row="10" Content="Exit" Click="exitButtonClicked" />
             </Grid>
         </wpf:DrawerHost.LeftDrawerContent>
         <Grid>

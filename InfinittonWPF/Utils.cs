@@ -120,7 +120,7 @@ namespace InfinittonWPF
                     keyString = "Ctrl";
                     break;
                 case 18:
-                    keyString = "Menu";
+                    keyString = "Alt";
                     break;
                 case 19:
                     keyString = "Pause";
