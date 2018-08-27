@@ -16,9 +16,7 @@ namespace InfinittonWPF
         {
             return "Grey.PNG";
         }
-
-        public String Title { get; set; }
-    
+        public String Title { get; set; } = "";
 
         private String _IconPath = null;
         public String IconPath

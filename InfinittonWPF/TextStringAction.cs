@@ -12,7 +12,7 @@ namespace InfinittonWPF
 {
     public class TextStringAction  : IButtonPressAction
     {
-        public String Value { get; set; }
+        public String Value { get; set; } = "";
         InputSimulator sim = new InputSimulator();
 
         public override void DoStuff(MainController controller, int buttonNum)

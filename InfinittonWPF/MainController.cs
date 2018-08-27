@@ -17,6 +17,7 @@ using USBInterface;
 using WindowsInput.Native;
 using System.Xml.Linq;
 using System.Xml;
+using System.IO.Compression;
 
 namespace InfinittonWPF
 {
@@ -178,6 +179,7 @@ namespace InfinittonWPF
 
         public void Load()
         {
+            allActions.Clear();
             if (!File.Exists(SaveFileName)) return;
             XDocument doc = XDocument.Load(SaveFileName);
             foreach (XElement elem in doc.Element("root").Elements())
@@ -451,6 +453,61 @@ namespace InfinittonWPF
                 {
                     ChangeFolder(kvp.Key);
                 }
+            }
+        }
+
+        internal void Export()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Zip config File (*.zip) | *.zip";
+            sfd.DefaultExt = ".zip";
+            if (sfd.ShowDialog() ?? false)
+            {
+                if (File.Exists(sfd.FileName)) File.Delete(sfd.FileName);
+                using (var archive = ZipFile.Open(sfd.FileName, ZipArchiveMode.Create))
+                {
+                    archive.CreateEntryFromFile(SaveFileName, SaveFileName);
+                    foreach (var file in Directory.EnumerateFiles("Images/"))
+                    {
+                        string fname = "Images/" + Path.GetFileName(file);
+                        archive.CreateEntryFromFile(fname, fname);
+                    }
+                }
+            }
+        }
+
+        internal void Import()
+        {
+            try
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Zip config File (*.zip) | *.zip";
+                ofd.DefaultExt = ".zip";
+                if (ofd.ShowDialog() ?? false)
+                {
+                    if (!File.Exists(ofd.FileName)) return;
+                    using (var archive = ZipFile.Open(ofd.FileName, ZipArchiveMode.Read))
+                    {
+                        archive.GetEntry(SaveFileName);
+
+                        for (int i = 0; i < 15; i++) mainWindow.Actions[i] = new NullAction(); // Clear out binding stuff
+                        mainWindow.Refresh();
+
+                        Directory.Delete("Images", true);
+                        Directory.CreateDirectory("Images");
+
+                        foreach (var entry in archive.Entries)
+                        {
+                            entry.ExtractToFile(entry.Name, true);
+                        }
+                    }
+                    Load();
+                    LoadIcons();
+                }
+            }
+            catch (Exception exc)
+            {
+
             }
         }
     }

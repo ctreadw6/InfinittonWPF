@@ -745,5 +745,15 @@ namespace InfinittonWPF
         {
             Exit();
         }
+
+        private void importButtonClicked(object sender, RoutedEventArgs e)
+        {
+            controller.Import();
+        }
+
+        private void exportButtonClicked(object sender, RoutedEventArgs e)
+        {
+            controller.Export();
+        }
     }
 }

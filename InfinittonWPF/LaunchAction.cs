@@ -11,8 +11,8 @@ namespace InfinittonWPF
 {
     public class LaunchAction : IButtonPressAction
     {
-        public String ExePath { get; set; }
-        public String Args { get; set; }
+        public String ExePath { get; set; } = "";
+        public String Args { get; set; } = "";
         public ProcessRunningAction AlreadyRunningAction { get; set; }
 
         public override void DoStuff(MainController controller, int buttonNum)

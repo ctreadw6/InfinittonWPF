@@ -57,7 +57,14 @@
                         <Hyperlink NavigateUri="https://github.com/ctreadw6/InfinittonWPF" RequestNavigate="Hyperlink_OnRequestNavigate">Open Github Repository</Hyperlink>
                     </TextBlock>
                     <TextBlock HorizontalAlignment="Center" Text="{Binding VersionString}"></TextBlock>
-
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Import" Grid.Column="0" Click="importButtonClicked"/>
+                        <Button Content="Export" Grid.Column="1" Click="exportButtonClicked"/>
+                    </Grid>
                 </StackPanel>
                 <Button Grid.Row="10" Content="Exit" Click="exitButtonClicked" />
             </Grid>
