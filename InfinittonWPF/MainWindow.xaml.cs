@@ -730,6 +730,7 @@ namespace InfinittonWPF
         {
             try
             {
+                controller.SetDeviceBrightness(0);
                 controller?.Kill();
             }
             catch
