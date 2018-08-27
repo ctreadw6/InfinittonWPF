@@ -90,6 +90,8 @@
                 <Image Grid.Row="1" Grid.Column="1" Source="{Binding StartProgramActionPath}" Style="{StaticResource myActionImageStyle}" ToolTip="Launch a program or website" Tag="StartProgramAction"/>
                 <Image Grid.Row="2" Grid.Column="1" Source="{Binding FolderActionPath}" Style="{StaticResource myActionImageStyle}" ToolTip="A Folder to hold more actions" Tag="FolderAction"/>
                 <Image Grid.Row="3" Grid.Column="1" Source="{Binding TextStringActionPath}" Style="{StaticResource myActionImageStyle}" ToolTip="Send a string of text to the focused application" Tag="TextStringAction"/>
+                <Image Grid.Row="4" Grid.Column="1" Source="{Binding HotkeyActionPath}" Style="{StaticResource myActionImageStyle}" ToolTip="Perform a hotkey action. E.g. CTRL + C" Tag="HotkeyAction"/>
+
             </Grid>
             <Grid Grid.Column="1" Grid.RowSpan="3" x:Name="mainGrid">
                 <Grid.RowDefinitions>
@@ -209,6 +211,18 @@
                     </DockPanel>
                     <TextBlock Text="String: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <TextBox x:Name="tbValue" Text="Some Text String" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" AcceptsReturn="True" TextWrapping="Wrap"/>
+                    <DockPanel Margin="0,5,0,0">
+                        <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
+                        <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="5" x:Name="HotkeyActionPanel" Visibility="Collapsed">
+                    <DockPanel>
+                        <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="tbTitleHotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                    </DockPanel>
+                    <TextBlock Text="Hotkey: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="tbValueHotkey" PreviewKeyDown="hotkeyTextboxKeyDown" Text="Enter Hotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
                     <DockPanel Margin="0,5,0,0">
                         <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
                         <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>

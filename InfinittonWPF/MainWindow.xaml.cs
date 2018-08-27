@@ -21,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TsudaKageyu;
+using WindowsInput.Native;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
 using ContextMenu = System.Windows.Controls.ContextMenu;
@@ -50,6 +51,11 @@ namespace InfinittonWPF
         public String TextStringActionPath
         {
             get { return "textStringIcon.png"; }
+        }
+
+        public String HotkeyActionPath
+        {
+            get { return "HotkeyIcon.png"; }
         }
 
         public String VersionString
@@ -272,6 +278,9 @@ namespace InfinittonWPF
                     case "TextStringAction":
                         Actions[imageNum] = new TextStringAction();
                         break;
+                    case "HotkeyAction":
+                        Actions[imageNum] = new HotkeyAction();
+                        break;
                 }
 
                 controller.AddAction(imageNum + 1, Actions[imageNum]);
@@ -332,6 +341,7 @@ namespace InfinittonWPF
                     LaunchActionPanel.Visibility = Visibility.Visible;
                     FolderActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
+                    HotkeyActionPanel.Visibility = Visibility.Collapsed;
                     tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                     tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
                     tbTitleAction.Text = (Actions[SelectedNumber] as LaunchAction).Title;
@@ -343,6 +353,7 @@ namespace InfinittonWPF
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
                     FolderActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Visible;
+                    HotkeyActionPanel.Visibility = Visibility.Collapsed;
                     tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
                     tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
                 }
@@ -351,14 +362,26 @@ namespace InfinittonWPF
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
                     FolderActionPanel.Visibility = Visibility.Visible;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
+                    HotkeyActionPanel.Visibility = Visibility.Collapsed;
                     tbFolderCondition.Text = (Actions[SelectedNumber] as FolderAction).ExeConditionName;
                     tbTitleTextString.Text = (Actions[SelectedNumber] as FolderAction).Title;
+                }
+                else if (Actions[SelectedNumber] is HotkeyAction)
+                {
+                    LaunchActionPanel.Visibility = Visibility.Collapsed;
+                    FolderActionPanel.Visibility = Visibility.Collapsed;
+                    TextStringActionPanel.Visibility = Visibility.Collapsed;
+                    HotkeyActionPanel.Visibility = Visibility.Visible;
+                    tbValueHotkey.Text = (Actions[SelectedNumber] is HotkeyAction).ToString();
+                    Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
+                    MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
                 }
                 else
                 {
                     tbTitleAction.Text = tbTitleTextString.Text = tbValue.Text = tbPath.Text = tbArgs.Text = "";
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
+                    HotkeyActionPanel.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -391,6 +414,12 @@ namespace InfinittonWPF
             {
                 tbFolderCondition.Text = (Actions[SelectedNumber] as FolderAction).ExeConditionName;
                 tbTitleTextString.Text = (Actions[SelectedNumber] as FolderAction).Title;
+            }
+            else if (Actions[SelectedNumber] is HotkeyAction)
+            {
+                tbValueHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).ToString();
+                Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
+                MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
             }
         }
 
@@ -476,11 +505,19 @@ namespace InfinittonWPF
                 (Actions[SelectedNumber] as FolderAction).ExeConditionName = tbFolderCondition.Text;
                 (Actions[SelectedNumber] as FolderAction).Title = tbTitleTextString.Text;
             }
+            else if (Actions[SelectedNumber] is HotkeyAction)
+            {
+                (Actions[SelectedNumber] as HotkeyAction).MainKey = MainKey;
+                (Actions[SelectedNumber] as HotkeyAction).Modifiers = Modifiers;
+            }
 
             controller.Save();
             controller.LoadIcons();
         }
 
+        // Used for temp for hotkey until save is clicked.
+        public List<VirtualKeyCode> Modifiers = new List<VirtualKeyCode>();
+        public VirtualKeyCode MainKey = VirtualKeyCode.VK_A;
 
         private void PathButtonClick(object sender, RoutedEventArgs e)
         {
@@ -668,6 +705,33 @@ namespace InfinittonWPF
             }
 
 
+        }
+
+        public Key[] IgnoreKeys =
+        {
+            Key.LeftAlt, Key.LeftCtrl, Key.LeftShift, Key.LWin, Key.RWin, Key.RightAlt, Key.RightCtrl, Key.RightShift
+        };
+
+        private void hotkeyTextboxKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (IgnoreKeys.Contains(e.Key)) return;
+
+            Modifiers.Clear();
+
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                Modifiers.Add(VirtualKeyCode.MENU);
+                if (IgnoreKeys.Contains(e.SystemKey)) return;
+            }
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) Modifiers.Add(VirtualKeyCode.CONTROL);
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) Modifiers.Add(VirtualKeyCode.SHIFT);
+            if ((Keyboard.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows) Modifiers.Add(VirtualKeyCode.LWIN);
+
+            MainKey = (VirtualKeyCode)KeyInterop.VirtualKeyFromKey(e.Key != Key.System ? e.Key : e.SystemKey);
+            Console.WriteLine(Utils.GetKeyString(MainKey));
+
+            tbValueHotkey.Text = Utils.GetKeysString(Modifiers, MainKey);
+            e.Handled = true;
         }
     }
 }

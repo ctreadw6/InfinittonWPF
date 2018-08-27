@@ -126,6 +126,7 @@
     </Page>
     <Compile Include="ButtonMapper.cs" />
     <Compile Include="FolderAction.cs" />
+    <Compile Include="HotkeyAction.cs" />
     <Compile Include="MacroAction.cs" />
     <Compile Include="StartupClass.cs" />
     <Compile Include="TextStringAction.cs" />
@@ -194,6 +195,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="home.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="hotkeyIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico">
