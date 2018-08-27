@@ -15,6 +15,8 @@ using InfinittonWPF.Properties;
 using Microsoft.Win32;
 using USBInterface;
 using WindowsInput.Native;
+using System.Xml.Linq;
+using System.Xml;
 
 namespace InfinittonWPF
 {
@@ -27,6 +29,8 @@ namespace InfinittonWPF
         ConcurrentDictionary<int, IButtonPressAction> actions = new ConcurrentDictionary<int, IButtonPressAction>();
         ConcurrentDictionary<string, IButtonPressAction> allActions = new ConcurrentDictionary<string, IButtonPressAction>();
         private MainWindow mainWindow;
+
+        public string SaveFileName = "ButtonLayout.xml";
         
 
         public static String HomeIconPath = Path.GetFullPath("Home.png");
@@ -94,7 +98,7 @@ namespace InfinittonWPF
 
             SetDeviceBrightness(Properties.Settings.Default.Brightness);
 
-            Load();
+            
             LoadIcons();
         }
         public void exit(object s, EventArgs a)
@@ -106,7 +110,10 @@ namespace InfinittonWPF
         public MainController(MainWindow _mainWindow)
         {
             if (!Directory.Exists("Images")) Directory.CreateDirectory("Images");
+            
             mainWindow = _mainWindow;
+            Load();
+            LoadIcons();
 
             scanner = new DeviceScanner(0xffff, 0x1f40);
             scanner.DeviceArrived += enter;
@@ -171,125 +178,122 @@ namespace InfinittonWPF
 
         public void Load()
         {
-            int i1, i2;
-            if (Properties.Settings.Default.ActionsSetting == null || Properties.Settings.Default.ActionsSetting.Count <= 0) return;
-
-            i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[FolderActions]") +1;
-            i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]");
-
-            for (int i = i1; i < i2; i += 3)
+            if (!File.Exists(SaveFileName)) return;
+            XDocument doc = XDocument.Load(SaveFileName);
+            foreach (XElement elem in doc.Element("root").Elements())
             {
-                var action = new FolderAction();
-                string path = Properties.Settings.Default.ActionsSetting[i];
-                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
-                action.ExeConditionName = Properties.Settings.Default.ActionsSetting[i + 2];
-                allActions.TryAdd(path, action);
-                
-            }
-
-            i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[LaunchAction]") + 1;
-            i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]");
-            for (int i = i1; i < i2; i += 5)
-            {
-                var action = new LaunchAction();
-                string path = Properties.Settings.Default.ActionsSetting[i];
-                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
-                action.ExePath = Properties.Settings.Default.ActionsSetting[i + 2];
-                action.Args = Properties.Settings.Default.ActionsSetting[i + 3];
-                var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
-                Enum.TryParse(Properties.Settings.Default.ActionsSetting[i + 4], out result);
-                action.AlreadyRunningAction = result;
-                if (File.Exists("Images/" + path + ".png")) action.IconPath = "Images/" + path + ".png";
-
-                allActions.TryAdd(path, action);
-            }
-
-            i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[StringActions]") + 1;
-            i2 = Properties.Settings.Default.ActionsSetting.IndexOf("[HotkeyActions]");
-            for (int i = i1; i < i2; i += 3)
-            {
-                var action = new TextStringAction();
-                string path = Properties.Settings.Default.ActionsSetting[i];
-                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
-                action.Value = Properties.Settings.Default.ActionsSetting[i + 2];
-                allActions.TryAdd(path, action);
-            }
-
-            i1 = Properties.Settings.Default.ActionsSetting.IndexOf("[HotkeyActions]") + 1;
-            i2 = Properties.Settings.Default.ActionsSetting.Count;
-            for (int i = i1; i < i2; i += 6)
-            {
-                var action = new HotkeyAction();
-                string path = Properties.Settings.Default.ActionsSetting[i];
-                action.Title = Properties.Settings.Default.ActionsSetting[i + 1];
-                for (int j = 2; j < 5; j++)
+                string path = "";
+                IButtonPressAction action = null;
+                switch (elem.Name.LocalName)
                 {
-                    VirtualKeyCode key = (VirtualKeyCode)int.Parse(Properties.Settings.Default.ActionsSetting[i + j]);
-                    if (key != 0)
-                        action.Modifiers.Add(key);
+                    case "FolderAction":
+                        FolderAction folderAction = new FolderAction();
+                        action = folderAction;
+                        path = elem.Attribute("Key").Value.ToString();
+                        folderAction.Title = elem.Attribute("Title").Value.ToString();
+                        folderAction.ExeConditionName = elem.Attribute("ExeCondition").Value.ToString();
+                        allActions.TryAdd(path, folderAction);
+                        break;
+                    case "LaunchAction":
+                        LaunchAction launchAction = new LaunchAction();
+                        action = launchAction;
+                        path = elem.Attribute("Key").Value.ToString();
+                        launchAction.Title = elem.Attribute("Title").Value.ToString();
+                        launchAction.ExePath = elem.Attribute("ExePath").Value.ToString();
+                        launchAction.Args = elem.Attribute("Args").Value.ToString();
+                        var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
+                        Enum.TryParse(elem.Attribute("AlreadyRunningAction").Value.ToString(), out result);
+                        launchAction.AlreadyRunningAction = result;
+                        allActions.TryAdd(path, launchAction);
+                        break;
+                    case "StringAction":
+                        TextStringAction textAction = new TextStringAction();
+                        action = textAction;
+                        path = elem.Attribute("Key").Value.ToString();
+                        textAction.Title = elem.Attribute("Title").Value.ToString();
+                        textAction.Value = elem.Attribute("Value").Value.ToString();
+                        allActions.TryAdd(path, textAction);
+                        break;
+                    case "HotkeyAction":
+                        HotkeyAction hotkeyAction = new HotkeyAction();
+                        action = hotkeyAction;
+                        path = elem.Attribute("Key").Value.ToString();
+                        hotkeyAction.Title = elem.Attribute("Title").Value.ToString();
+                        for (int i = 0; i < 3; i++)
+                        {
+                            VirtualKeyCode key = (VirtualKeyCode)int.Parse(elem.Attribute("Mod" + i).Value.ToString());
+                            if (key != 0)
+                                hotkeyAction.Modifiers.Add(key);
+                        }
+
+                        hotkeyAction.MainKey = (VirtualKeyCode)int.Parse(elem.Attribute("MainKey").Value.ToString());
+                        allActions.TryAdd(path, hotkeyAction);
+                        break;
                 }
-                action.MainKey = (VirtualKeyCode)int.Parse(Properties.Settings.Default.ActionsSetting[i + 5]);
-
-
-                allActions.TryAdd(path, action);
+                if (File.Exists("Images/" + path + ".png")) action.IconPath = "Images/" + path + ".png";
             }
         }
 
         public void Save()
         {
-            StringCollection setting = new StringCollection();
-            setting.Add("[FolderActions]");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("root");
+            doc.Add(root);
             foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(FolderAction)))
             {
+                XElement elem = new XElement("FolderAction");
                 var action = kvp.Value as FolderAction;
-                setting.Add(kvp.Key);
-                setting.Add(action.Title);
-                setting.Add(action.ExeConditionName ?? "");
+                elem.SetAttributeValue("Key", kvp.Key);
+                elem.SetAttributeValue("Title", action.Title);
+                elem.SetAttributeValue("ExeCondition", action.ExeConditionName ?? "");
+                root.Add(elem);
             }
 
-            setting.Add("[LaunchAction]");
             foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(LaunchAction)))
             {
+                XElement elem = new XElement("LaunchAction");
                 var action = kvp.Value as LaunchAction;
-                setting.Add(kvp.Key);
-                setting.Add(action.Title);
-                setting.Add(action.ExePath);
-                setting.Add(action.Args);
-                setting.Add(action.AlreadyRunningAction.ToString());
+                elem.SetAttributeValue("Key", kvp.Key);
+                elem.SetAttributeValue("Title", action.Title);
+                elem.SetAttributeValue("ExePath", action.ExePath);
+                elem.SetAttributeValue("Args", action.Args);
+                elem.SetAttributeValue("AlreadyRunningAction", action.AlreadyRunningAction.ToString());
+                root.Add(elem);
             }
 
-            setting.Add("[StringActions]");
             foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(TextStringAction)))
             {
+                XElement elem = new XElement("StringAction");
                 var action = kvp.Value as TextStringAction;
-                setting.Add(kvp.Key);
-                setting.Add(action?.Title);
-                setting.Add(action?.Value);
+
+                elem.SetAttributeValue("Key", kvp.Key);
+                elem.SetAttributeValue("Title", action.Title);
+                elem.SetAttributeValue("Value", action.Value);
+                root.Add(elem);
             }
 
-            setting.Add("[HotkeyActions]");
             foreach (var kvp in allActions.Where(x => x.Value.GetType() == typeof(HotkeyAction)))
             {
+                XElement elem = new XElement("HotkeyAction");
                 var action = kvp.Value as HotkeyAction;
-                setting.Add(kvp.Key);
-                setting.Add(action?.Title);
+                elem.SetAttributeValue("Key", kvp.Key);
+                elem.SetAttributeValue("Title", action.Title);
                 for (int i = 0; i < 3; i++)
                 {
                     if (action?.Modifiers.Count > i)
                     {
-                        setting.Add(((int)action?.Modifiers[i]).ToString());
+                        elem.SetAttributeValue("Mod" + i, ((int)action?.Modifiers[i]).ToString());
                     }
                     else
                     {
-                        setting.Add("0");
+                        elem.SetAttributeValue("Mod" + i, "0");
                     }
                 }
-                setting.Add(((int)action?.MainKey).ToString());
-                
+                elem.SetAttributeValue("MainKey", ((int)action?.MainKey).ToString());
+                root.Add(elem);
             }
 
-            Properties.Settings.Default.ActionsSetting = setting;
-            Properties.Settings.Default.Save();
+            doc.Save(SaveFileName);
         }
 
         public void AddImage(int index, String copyFromPath)
@@ -334,7 +338,7 @@ namespace InfinittonWPF
 
         public void LoadIcons()
         {
-            if (!CheckDevice()) return;
+            
             lock (lockObj)
             {
                 IgnoreReport = true;
