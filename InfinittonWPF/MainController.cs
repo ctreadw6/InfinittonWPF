@@ -30,6 +30,7 @@ namespace InfinittonWPF
         ConcurrentDictionary<int, IButtonPressAction> actions = new ConcurrentDictionary<int, IButtonPressAction>();
         ConcurrentDictionary<string, IButtonPressAction> allActions = new ConcurrentDictionary<string, IButtonPressAction>();
         private MainWindow mainWindow;
+        private int currentBrightness = 0;
 
         public string SaveFileName = "ButtonLayout.xml";
         
@@ -65,6 +66,12 @@ namespace InfinittonWPF
         public void handle(object s, USBInterface.ReportEventArgs a)
         {
             if (IgnoreReport) return;
+
+            if (currentBrightness == 0)
+            {
+                SetDeviceBrightness(Settings.Default.Brightness == 0 ? 80 : Settings.Default.Brightness);
+                return;
+            }
 
             int val = a.Data[1] << 8 | a.Data[2];
             int buttonNum = ButtonMapper.GetButtonIndex((ushort)val) + 1;
@@ -408,6 +415,7 @@ namespace InfinittonWPF
                 device.SendFeatureReport(buf);
                 //_device.WriteFeatureData(buf);
             }
+            currentBrightness = val;
         }
 
         public void SendKeyFeature(int key, IButtonPressAction action)

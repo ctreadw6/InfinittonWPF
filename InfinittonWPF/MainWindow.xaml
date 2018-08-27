@@ -108,7 +108,7 @@
             </Grid>
             <Grid Grid.Column="1" Grid.RowSpan="3" x:Name="mainGrid">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="92"/>
                     <RowDefinition Height="92"/>
                     <RowDefinition Height="92"/>
@@ -120,7 +120,20 @@
                     <ColumnDefinition Width="92"/>
                     <ColumnDefinition Width="92"/>
                 </Grid.ColumnDefinitions>
-                <Slider x:Name="brightnessSlider" ValueChanged="BrightnessSlider_OnValueChanged" Minimum="0" Maximum="100" Grid.ColumnSpan="3"/>
+                <Grid Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" MouseDown="brightnessMinClicked">
+                        <wpf:PackIcon Kind="Brightness1" />
+                    </Label>
+                    <Slider Grid.Column="1" VerticalAlignment="Center" VerticalContentAlignment="Center" x:Name="brightnessSlider" ValueChanged="BrightnessSlider_OnValueChanged" Minimum="0" Maximum="100"/>
+                    <Label Grid.Column="2" MouseDown="brightnessMaxClicked">
+                        <wpf:PackIcon Kind="Brightness7" />
+                    </Label>
+                </Grid>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="0">
                     <Image Style="{StaticResource myImageStyle}" Source="{Binding Action0, Converter={StaticResource myImageConverter}}" Tag="0"></Image>
                 </Border>

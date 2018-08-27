@@ -756,5 +756,15 @@ namespace InfinittonWPF
         {
             controller.Export();
         }
+
+        private void brightnessMinClicked(object sender, MouseButtonEventArgs e)
+        {
+            brightnessSlider.Value = 0;
+        }
+
+        private void brightnessMaxClicked(object sender, MouseButtonEventArgs e)
+        {
+            brightnessSlider.Value = 100;
+        }
     }
 }
