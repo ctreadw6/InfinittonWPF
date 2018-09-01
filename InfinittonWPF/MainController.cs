@@ -207,6 +207,9 @@ namespace InfinittonWPF
                         if (elem.Attribute("BackgroundColor") != null)
                         folderAction.BackgroundColor =
                             System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
+                        if (elem.Attribute("Font") != null)
+                            folderAction.Titlefont = FontSerializationHelper.Deserialize(elem.Attribute("Font").Value);
+                            folderAction.ShowTitleLabel = bool.Parse(elem.Attribute("ShowTitleLabel")?.Value ?? "False");
                         allActions.TryAdd(path, folderAction);
                         break;
                     case "LaunchAction":
@@ -219,6 +222,9 @@ namespace InfinittonWPF
                         if (elem.Attribute("BackgroundColor") != null)
                             launchAction.BackgroundColor =
                                 System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
+                        if (elem.Attribute("Font") != null)
+                            launchAction.Titlefont = FontSerializationHelper.Deserialize(elem.Attribute("Font").Value);
+                        launchAction.ShowTitleLabel = bool.Parse(elem.Attribute("ShowTitleLabel")?.Value ?? "False");
                         var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
                         Enum.TryParse(elem.Attribute("AlreadyRunningAction").Value.ToString(), out result);
                         launchAction.AlreadyRunningAction = result;
@@ -233,6 +239,9 @@ namespace InfinittonWPF
                         if (elem.Attribute("BackgroundColor") != null)
                             textAction.BackgroundColor =
                                 System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
+                        if (elem.Attribute("Font") != null)
+                            textAction.Titlefont = FontSerializationHelper.Deserialize(elem.Attribute("Font").Value);
+                        textAction.ShowTitleLabel = bool.Parse(elem.Attribute("ShowTitleLabel")?.Value ?? "False");
                         allActions.TryAdd(path, textAction);
                         break;
                     case "HotkeyAction":
@@ -242,7 +251,10 @@ namespace InfinittonWPF
                         if (elem.Attribute("BackgroundColor") != null)
                             hotkeyAction.BackgroundColor =
                                 System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
+                        if (elem.Attribute("Font") != null)
+                            hotkeyAction.Titlefont = FontSerializationHelper.Deserialize(elem.Attribute("Font").Value);
                         hotkeyAction.Title = elem.Attribute("Title").Value.ToString();
+                        hotkeyAction.ShowTitleLabel = bool.Parse(elem.Attribute("ShowTitleLabel")?.Value ?? "False");
                         for (int i = 0; i < 3; i++)
                         {
                             VirtualKeyCode key = (VirtualKeyCode)int.Parse(elem.Attribute("Mod" + i).Value.ToString());
@@ -271,6 +283,8 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("Title", action.Title);
                 elem.SetAttributeValue("ExeCondition", action.ExeConditionName ?? "");
                 elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
+                elem.SetAttributeValue("Font", FontSerializationHelper.Serialize(action.Titlefont));
+                elem.SetAttributeValue("ShowTitleLabel", action.ShowTitleLabel);
                 root.Add(elem);
             }
 
@@ -284,6 +298,8 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("Args", action.Args);
                 elem.SetAttributeValue("AlreadyRunningAction", action.AlreadyRunningAction.ToString());
                 elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
+                elem.SetAttributeValue("Font", FontSerializationHelper.Serialize(action.Titlefont));
+                elem.SetAttributeValue("ShowTitleLabel", action.ShowTitleLabel);
                 root.Add(elem);
             }
 
@@ -296,6 +312,8 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("Title", action.Title);
                 elem.SetAttributeValue("Value", action.Value);
                 elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
+                elem.SetAttributeValue("Font", FontSerializationHelper.Serialize(action.Titlefont));
+                elem.SetAttributeValue("ShowTitleLabel", action.ShowTitleLabel);
                 root.Add(elem);
             }
 
@@ -306,6 +324,8 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("Key", kvp.Key);
                 elem.SetAttributeValue("Title", action.Title);
                 elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
+                elem.SetAttributeValue("Font", FontSerializationHelper.Serialize(action.Titlefont));
+                elem.SetAttributeValue("ShowTitleLabel", action.ShowTitleLabel);
                 for (int i = 0; i < 3; i++)
                 {
                     if (action?.Modifiers.Count > i)

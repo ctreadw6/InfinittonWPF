@@ -8,12 +8,13 @@
         xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:infinittonWpf="clr-namespace:InfinittonWPF"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
+        
         Loaded="MainWindow_OnLoaded"
         Closing="MainWindow_OnClosing"
         KeyDown="ImageKeyDown"
@@ -195,14 +196,27 @@
                                 </ContextMenu>
                             </Image.ContextMenu>
                         </Image>
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>
+                            <ToggleButton Grid.Column="1" x:Name="showTitleToggleButton"  Style="{DynamicResource MaterialDesignSwitchToggleButton}"></ToggleButton>
+                            <TextBox Grid.Column="2" x:Name="tbTitleAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" Foreground="White"/>
+                            <Button Grid.Column="3" Click="fontSelecterButtonClick">
+                                <Button.Content>
+                                    <wpf:PackIcon Kind="FormatFont"></wpf:PackIcon>
+                                </Button.Content>
+                            </Button>
+                            
+                        </Grid>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical" Margin="5" x:Name="LaunchActionPanel" Visibility="Collapsed">
-
-                        <DockPanel Margin="0,2">
-                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>
-                            <TextBox x:Name="tbTitleAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                        </DockPanel>
                         <DockPanel>
                             <TextBlock Text="Path: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                             <Grid>
@@ -232,11 +246,6 @@
                         </DockPanel>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="5" x:Name="FolderActionPanel" Visibility="Collapsed">
-
-                        <DockPanel>
-                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <TextBox x:Name="tbTitleFolderAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                        </DockPanel>
                         <DockPanel>
                             <TextBlock Text="Trigger Application: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                             <TextBox x:Name="tbFolderCondition" Text="chrome" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
@@ -247,10 +256,6 @@
                         </DockPanel>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="5" x:Name="TextStringActionPanel" Visibility="Collapsed">
-                        <DockPanel>
-                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <TextBox x:Name="tbTitleTextString" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                        </DockPanel>
                         <TextBlock Text="String: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <TextBox x:Name="tbValue" Text="Some Text String" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" AcceptsReturn="True" TextWrapping="Wrap"/>
                         <DockPanel Margin="0,5,0,0">
@@ -259,10 +264,6 @@
                         </DockPanel>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="5" x:Name="HotkeyActionPanel" Visibility="Collapsed">
-                        <DockPanel>
-                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <TextBox x:Name="tbTitleHotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                        </DockPanel>
                         <TextBlock Text="Hotkey: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <TextBox x:Name="tbValueHotkey" PreviewKeyDown="hotkeyTextboxKeyDown" Text="Enter Hotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
                         <DockPanel Margin="0,5,0,0">

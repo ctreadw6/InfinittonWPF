@@ -6,9 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using System.ComponentModel;
+using System.Drawing.Text;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using WpfColorFontDialog;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Drawing.Color;
+using FontFamily = System.Windows.Media.FontFamily;
 
 namespace InfinittonWPF
 {
@@ -28,6 +34,8 @@ namespace InfinittonWPF
         //}
 
         public Color BackgroundColor { get; set; } = Color.Black;
+        public FontInfo Titlefont { get; set; } = new FontInfo() {Size = 9, BrushColor = Brushes.White, Family = new FontFamily()};
+        public bool ShowTitleLabel { get; set; } = false;
 
         public Image Icon { get; set; } = null;
 

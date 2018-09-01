@@ -16,14 +16,17 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TsudaKageyu;
 using WindowsInput.Native;
+using WpfColorFontDialog;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
+using Color = System.Drawing.Color;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using DataFormats = System.Windows.DataFormats;
 using DragDropEffects = System.Windows.DragDropEffects;
@@ -265,6 +268,9 @@ namespace InfinittonWPF
                 SelectedImage = imageControl;
                 editImage.Source = imageControl.Source;
                 ClrPcker_Background.SelectedColor = System.Windows.Media.Color.FromRgb(Actions[SelectedNumber].BackgroundColor.R, Actions[SelectedNumber].BackgroundColor.G, Actions[SelectedNumber].BackgroundColor.B);
+                tbTitleAction.Text = Actions[SelectedNumber].Title;
+                FontInfo.ApplyFont(tbTitleAction, Actions[SelectedNumber].Titlefont);
+                showTitleToggleButton.IsChecked = Actions[SelectedNumber].ShowTitleLabel;
 
                 if (Actions[SelectedNumber] is LaunchAction)
                 {
@@ -274,7 +280,7 @@ namespace InfinittonWPF
                     HotkeyActionPanel.Visibility = Visibility.Collapsed;
                     tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
                     tbArgs.Text = (Actions[SelectedNumber] as LaunchAction).Args;
-                    tbTitleAction.Text = (Actions[SelectedNumber] as LaunchAction).Title;
+                    
                     tbNewProcessAction.SelectedItem =
                         (Actions[SelectedNumber] as LaunchAction).AlreadyRunningAction.ToString();
                 }
@@ -285,7 +291,6 @@ namespace InfinittonWPF
                     TextStringActionPanel.Visibility = Visibility.Visible;
                     HotkeyActionPanel.Visibility = Visibility.Collapsed;
                     tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
-                    tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
                 }
                 else if (Actions[SelectedNumber] is FolderAction)
                 {
@@ -294,7 +299,6 @@ namespace InfinittonWPF
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
                     HotkeyActionPanel.Visibility = Visibility.Collapsed;
                     tbFolderCondition.Text = (Actions[SelectedNumber] as FolderAction).ExeConditionName;
-                    tbTitleTextString.Text = (Actions[SelectedNumber] as FolderAction).Title;
                 }
                 else if (Actions[SelectedNumber] is HotkeyAction)
                 {
@@ -305,11 +309,9 @@ namespace InfinittonWPF
                     tbValueHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).ToString();
                     Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
                     MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
-                    tbTitleHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).Title;
                 }
                 else
                 {
-                    tbTitleAction.Text = tbTitleTextString.Text = tbValue.Text = tbPath.Text = tbArgs.Text = "";
                     LaunchActionPanel.Visibility = Visibility.Collapsed;
                     TextStringActionPanel.Visibility = Visibility.Collapsed;
                     HotkeyActionPanel.Visibility = Visibility.Collapsed;
@@ -330,6 +332,9 @@ namespace InfinittonWPF
         {
             ClrPcker_Background.SelectedColor = System.Windows.Media.Color.FromRgb(Actions[SelectedNumber].BackgroundColor.R,
                 Actions[SelectedNumber].BackgroundColor.G, Actions[SelectedNumber].BackgroundColor.B);
+            tbTitleAction.Text = Actions[SelectedNumber].Title;
+            FontInfo.ApplyFont(tbTitleAction, Actions[SelectedNumber].Titlefont);
+            showTitleToggleButton.IsChecked = Actions[SelectedNumber].ShowTitleLabel;
             if (Actions[SelectedNumber] is LaunchAction)
             {
                 tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
@@ -341,17 +346,14 @@ namespace InfinittonWPF
             else if (Actions[SelectedNumber] is TextStringAction)
             {
                 tbValue.Text = (Actions[SelectedNumber] as TextStringAction).Value;
-                tbTitleTextString.Text = (Actions[SelectedNumber] as TextStringAction).Title;
             }
             else if (Actions[SelectedNumber] is FolderAction)
             {
                 tbFolderCondition.Text = (Actions[SelectedNumber] as FolderAction).ExeConditionName;
-                tbTitleTextString.Text = (Actions[SelectedNumber] as FolderAction).Title;
             }
             else if (Actions[SelectedNumber] is HotkeyAction)
             {
                 tbValueHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).ToString();
-                tbTitleHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).Title;
                 Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
                 MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
             }
@@ -405,6 +407,9 @@ namespace InfinittonWPF
 
         private void saveButtonClick(object sender, RoutedEventArgs e)
         {
+            Actions[SelectedNumber].Title = tbTitleAction.Text;
+            Actions[SelectedNumber].Titlefont = FontInfo.GetControlFont(tbTitleAction);
+            Actions[SelectedNumber].ShowTitleLabel = showTitleToggleButton.IsChecked ?? false;
             if (Actions[SelectedNumber] is LaunchAction)
             {
                 var fullPath = FindExePath(tbPath.Text);
@@ -423,7 +428,6 @@ namespace InfinittonWPF
 
                 (Actions[SelectedNumber] as LaunchAction).ExePath = fullPath;
                 (Actions[SelectedNumber] as LaunchAction).Args = tbArgs.Text;
-                (Actions[SelectedNumber] as LaunchAction).Title = tbTitleAction.Text;
                 var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
                 Enum.TryParse(tbNewProcessAction.SelectedItem.ToString(), out result);
                 (Actions[SelectedNumber] as LaunchAction).AlreadyRunningAction = result;
@@ -432,18 +436,15 @@ namespace InfinittonWPF
             else if (Actions[SelectedNumber] is TextStringAction)
             {
                 (Actions[SelectedNumber] as TextStringAction).Value = tbValue.Text;
-                (Actions[SelectedNumber] as TextStringAction).Title = tbTitleTextString.Text;
             }
             else if (Actions[SelectedNumber] is FolderAction)
             {
                 (Actions[SelectedNumber] as FolderAction).ExeConditionName = tbFolderCondition.Text;
-                (Actions[SelectedNumber] as FolderAction).Title = tbTitleTextString.Text;
             }
             else if (Actions[SelectedNumber] is HotkeyAction)
             {
                 (Actions[SelectedNumber] as HotkeyAction).MainKey = MainKey;
                 (Actions[SelectedNumber] as HotkeyAction).Modifiers = Modifiers;
-                (Actions[SelectedNumber] as HotkeyAction).Title = tbTitleHotkey.Text;
             }
 
             Color c = Color.FromArgb(ClrPcker_Background.SelectedColor.Value.R,
@@ -729,6 +730,35 @@ namespace InfinittonWPF
             Actions[SelectedNumber].Icon = null;
             controller.LoadIcons();
             Refresh();
+        }
+
+        private void fontSelecterButtonClick(object sender, RoutedEventArgs e)
+        {
+            //We can pass a bool to choose if we preview the font directly in the list of fonts.
+            bool previewFontInFontList = false;
+            //True to allow user to input arbitrary font sizes. False to only allow predtermined sizes
+            bool allowArbitraryFontSizes = false;
+
+
+            ColorFontDialog dialog = new ColorFontDialog(previewFontInFontList, allowArbitraryFontSizes);
+            //TextElement.Foreground = "{DynamicResource MaterialDesignBody}"
+            //Background = "{DynamicResource MaterialDesignPaper}"
+            //FontFamily = "{DynamicResource MaterialDesignFont}"
+            dialog.Background = this.FindResource("MaterialDesignPaper") as SolidColorBrush;
+            dialog.Foreground = this.FindResource("MaterialDesignBody") as SolidColorBrush;
+            dialog.Font = FontInfo.GetControlFont(tbTitleAction);
+
+            //Optional custom allowed size range
+            dialog.FontSizes = new int[] { 10, 12, 14, 16, 18, 20, 22 };
+
+            if (dialog.ShowDialog() == true)
+            {
+                FontInfo font = dialog.Font;
+                if (font != null)
+                {
+                    FontInfo.ApplyFont(tbTitleAction, font);
+                }
+            }
         }
     }
 }

@@ -30,11 +30,6 @@ namespace InfinittonWPF
             0x02, 0x40, 0x1F, 0x00, 0x00, 0xB6, 0x1D, 0x00, 0x00, 0x55, 0xAA, 0xAA, 0x55, 0x11, 0x22, 0x33, 0x44
         };
 
-        public static byte[] GetBuffer(IButtonPressAction action)
-        {
-            return GetBuffer(action.GetIcon, action.Title);
-        }
-
         public static Bitmap Superimpose(Bitmap smallBmp, Color backgroundColor)
         {
             if (smallBmp == null)
@@ -71,9 +66,12 @@ namespace InfinittonWPF
 
             return Bmp;
         }
-
-        public static byte[] GetBuffer(Image image, string title = null)
+        
+        public static byte[] GetBuffer(IButtonPressAction action)
         {
+            Image image = action.Icon;
+            string title = action.Title;
+
             if (image == null)
             {
                 byte[] buf = new byte[8017*2];
@@ -86,7 +84,7 @@ namespace InfinittonWPF
             Bitmap bmp = ResizeImage(image, 72, 72);
             RectangleF rectf = new RectangleF(5, 50, 62, 15);
 
-            if (!string.IsNullOrEmpty(title))
+            if (!string.IsNullOrEmpty(title) && action.ShowTitleLabel)
             {
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
@@ -94,7 +92,8 @@ namespace InfinittonWPF
                     g.SmoothingMode = SmoothingMode.AntiAlias;
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    g.DrawString(title, new Font("Tahoma", 9), Brushes.White, rectf);
+                    g.DrawString(title, new Font(action.Titlefont.Family?.Source, (float)action.Titlefont.Size), 
+                        new SolidBrush(Color.FromArgb(action.Titlefont.Color.Brush.Color.R, action.Titlefont.Color.Brush.Color.G, action.Titlefont.Color.Brush.Color.B)), rectf);
 
                     g.Flush();
                 }

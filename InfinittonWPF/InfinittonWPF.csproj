@@ -120,6 +120,9 @@
     <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
       <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
     </Reference>
+    <Reference Include="WpfColorFontDialog, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WpfColorFontDialog.1.0.5\lib\WpfColorFontDialog.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
@@ -146,6 +149,7 @@
     </Page>
     <Compile Include="ButtonMapper.cs" />
     <Compile Include="FolderAction.cs" />
+    <Compile Include="FontSerializationHelper.cs" />
     <Compile Include="HotkeyAction.cs" />
     <Compile Include="MacroAction.cs" />
     <Compile Include="StartupClass.cs" />
