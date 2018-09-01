@@ -85,154 +85,79 @@ namespace InfinittonWPF
 
         // This is terrible, but it lets me bind it to the UI easily. 
         // Probably should refactor this it some point.
-        public String Action0
+        public BitmapSource Action0
         {
-            get { return Actions[0].IconPath; }
-            set
-            {
-                Actions[0].IconPath = value;
-                Notify("Action0");
-            }
+            get { return Actions[0].GetBitmapSource; }
         }
 
-        public String Action1
+        public BitmapSource Action1
         {
-            get { return Actions[1].IconPath; }
-            set
-            {
-                Actions[1].IconPath = value;
-                Notify("Action1");
-            }
+            get { return Actions[1].GetBitmapSource; }
         }
 
-        public String Action2
+        public BitmapSource Action2
         {
-            get { return Actions[2].IconPath; }
-            set
-            {
-                Actions[2].IconPath = value;
-                Notify("Action2");
-            }
+            get { return Actions[2].GetBitmapSource; }
         }
 
-        public String Action3
+        public BitmapSource Action3
         {
-            get { return Actions[3].IconPath; }
-            set
-            {
-                Actions[3].IconPath = value;
-                Notify("Action3");
-            }
+            get { return Actions[3].GetBitmapSource; }
         }
 
-        public String Action4
+        public BitmapSource Action4
         {
-            get { return Actions[4].IconPath; }
-            set
-            {
-                Actions[4].IconPath = value;
-                Notify("Action4");
-            }
+            get { return Actions[4].GetBitmapSource; }
         }
 
-        public String Action5
+        public BitmapSource Action5
         {
-            get { return Actions[5].IconPath; }
-            set
-            {
-                Actions[5].IconPath = value;
-                Notify("Action5");
-            }
+            get { return Actions[5].GetBitmapSource; }
         }
 
-        public String Action6
+        public BitmapSource Action6
         {
-            get { return Actions[6].IconPath; }
-            set
-            {
-                Actions[6].IconPath = value;
-                Notify("Action6");
-            }
+            get { return Actions[6].GetBitmapSource; }
         }
 
-        public String Action7
+        public BitmapSource Action7
         {
-            get { return Actions[7].IconPath; }
-            set
-            {
-                Actions[7].IconPath = value;
-                Notify("Action7");
-            }
+            get { return Actions[7].GetBitmapSource; }
         }
 
-        public String Action8
+        public BitmapSource Action8
         {
-            get { return Actions[8].IconPath; }
-            set
-            {
-                Actions[8].IconPath = value;
-                Notify("Action8");
-            }
+            get { return Actions[8].GetBitmapSource; }
         }
 
-        public String Action9
+        public BitmapSource Action9
         {
-            get { return Actions[9].IconPath; }
-            set
-            {
-                Actions[9].IconPath = value;
-                Notify("Action9");
-            }
+            get { return Actions[9].GetBitmapSource; }
         }
 
-        public String Action10
+        public BitmapSource Action10
         {
-            get { return Actions[10].IconPath; }
-            set
-            {
-                Actions[10].IconPath = value;
-                Notify("Action10");
-            }
+            get { return Actions[10].GetBitmapSource; }
         }
 
-        public String Action11
+        public BitmapSource Action11
         {
-            get { return Actions[11].IconPath; }
-            set
-            {
-                Actions[11].IconPath = value;
-                Notify("Action11");
-            }
+            get { return Actions[11].GetBitmapSource; }
         }
 
-        public String Action12
+        public BitmapSource Action12
         {
-            get { return Actions[12].IconPath; }
-            set
-            {
-                Actions[12].IconPath = value;
-                Notify("Action12");
-            }
+            get { return Actions[12].GetBitmapSource; }
         }
 
-        public String Action13
+        public BitmapSource Action13
         {
-            get { return Actions[13].IconPath; }
-            set
-            {
-                Actions[13].IconPath = value;
-                Notify("Action13");
-            }
+            get { return Actions[13].GetBitmapSource; }
         }
 
-        public String Action14
+        public BitmapSource Action14
         {
-            get { return Actions[14].IconPath; }
-            set
-            {
-                Actions[14].IconPath = value;
-                Notify("Action14");
-            }
+            get { return Actions[14].GetBitmapSource; }
         }
 
         private MainController controller;
@@ -291,7 +216,7 @@ namespace InfinittonWPF
                 string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
                 if (File.Exists(files[0]))
                 {
-                    Actions[imageNum].IconPath = files[0];
+                    Actions[imageNum].Icon = Bitmap.FromFile(files[0]);
                     controller.AddAction(imageNum + 1, Actions[imageNum]);
                     Notify("Action" + imageNum.ToString());
                 }
@@ -304,6 +229,8 @@ namespace InfinittonWPF
             {
                 Notify("Action" + i.ToString());
             }
+            if (SelectedNumber >= 0)
+                editImage.Source = Actions[SelectedNumber].GetBitmapSource;
         }
 
 
@@ -326,6 +253,7 @@ namespace InfinittonWPF
                 }
 
                 SelectedNumber = imageNum;
+                topActionPanel.Visibility = Visibility.Visible;
                 Border parentBorder = imageControl.Parent as Border;
                 if (parentBorder == null) return;
                 parentBorder.BorderBrush = Brushes.Blue;
@@ -335,6 +263,8 @@ namespace InfinittonWPF
                 }
 
                 SelectedImage = imageControl;
+                editImage.Source = imageControl.Source;
+                ClrPcker_Background.SelectedColor = System.Windows.Media.Color.FromRgb(Actions[SelectedNumber].BackgroundColor.R, Actions[SelectedNumber].BackgroundColor.G, Actions[SelectedNumber].BackgroundColor.B);
 
                 if (Actions[SelectedNumber] is LaunchAction)
                 {
@@ -397,6 +327,8 @@ namespace InfinittonWPF
 
         private void discardButtonClick(object sender, RoutedEventArgs e)
         {
+            ClrPcker_Background.SelectedColor = System.Windows.Media.Color.FromRgb(Actions[SelectedNumber].BackgroundColor.R,
+                Actions[SelectedNumber].BackgroundColor.G, Actions[SelectedNumber].BackgroundColor.B);
             if (Actions[SelectedNumber] is LaunchAction)
             {
                 tbPath.Text = (Actions[SelectedNumber] as LaunchAction).ExePath;
@@ -513,6 +445,9 @@ namespace InfinittonWPF
                 (Actions[SelectedNumber] as HotkeyAction).Title = tbTitleHotkey.Text;
             }
 
+            Color c = Color.FromArgb(ClrPcker_Background.SelectedColor.Value.R,
+                ClrPcker_Background.SelectedColor.Value.G, ClrPcker_Background.SelectedColor.Value.B);
+            Actions[SelectedNumber].BackgroundColor = c;
             controller.Save();
             controller.LoadIcons();
         }
@@ -765,6 +700,34 @@ namespace InfinittonWPF
         private void brightnessMaxClicked(object sender, MouseButtonEventArgs e)
         {
             brightnessSlider.Value = 100;
+        }
+
+        private void ClrPcker_Background_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<System.Windows.Media.Color?> e)
+        {
+            if (SelectedNumber < 0) return;
+        }
+
+        private void SelectImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.DefaultExt = ".exe";
+                ofd.Filter =
+                    "Images | *.bmp; *.gif; *.jpg; *.jpeg; *.jpe; *.jif; *.jfif; *.jfi; *.png; *.tiff; *.tif | All files | *.*";
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    Actions[SelectedNumber].Icon = Bitmap.FromFile(ofd.FileName);
+                    controller.LoadIcons();
+                    Refresh();
+                }
+            }
+        }
+
+        private void clearImageClick(object sender, RoutedEventArgs e)
+        {
+            Actions[SelectedNumber].Icon = null;
+            controller.LoadIcons();
+            Refresh();
         }
     }
 }

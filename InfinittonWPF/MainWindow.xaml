@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:infinittonWpf="clr-namespace:InfinittonWPF"
@@ -135,124 +136,140 @@
                     </Label>
                 </Grid>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="0">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action0, Converter={StaticResource myImageConverter}}" Tag="0"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action0}" Tag="0"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="1">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action5, Converter={StaticResource myImageConverter}}" Tag="5"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action5}" Tag="5"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="1" Grid.Column="2">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action10, Converter={StaticResource myImageConverter}}" Tag="10"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action10}" Tag="10"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="2" Grid.Column="0">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action1, Converter={StaticResource myImageConverter}}" Tag="1"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action1}" Tag="1"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="2" Grid.Column="1">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action6, Converter={StaticResource myImageConverter}}" Tag="6"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action6}" Tag="6"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="2" Grid.Column="2">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action11, Converter={StaticResource myImageConverter}}" Tag="11"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action11}" Tag="11"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="3" Grid.Column="0">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action2, Converter={StaticResource myImageConverter}}" Tag="2"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action2}" Tag="2"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="3" Grid.Column="1">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action7, Converter={StaticResource myImageConverter}}" Tag="7"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action7}" Tag="7"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="3" Grid.Column="2">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action12, Converter={StaticResource myImageConverter}}" Tag="12"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action12}" Tag="12"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="4" Grid.Column="0">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action3, Converter={StaticResource myImageConverter}}" Tag="3"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action3}" Tag="3"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="4" Grid.Column="1">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action8, Converter={StaticResource myImageConverter}}" Tag="8"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action8}" Tag="8"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="4" Grid.Column="2">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action13, Converter={StaticResource myImageConverter}}" Tag="13"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action13}" Tag="13"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="5" Grid.Column="0">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action4, Converter={StaticResource myImageConverter}}" Tag="4"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action4}" Tag="4"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="5" Grid.Column="1">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action9, Converter={StaticResource myImageConverter}}" Tag="9"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action9}" Tag="9"></Image>
                 </Border>
                 <Border Style="{StaticResource myBorderStyle}" Grid.Row="5" Grid.Column="2">
-                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action14, Converter={StaticResource myImageConverter}}" Tag="14"></Image>
+                    <Image Style="{StaticResource myImageStyle}" Source="{Binding Action14}" Tag="14"></Image>
                 </Border>
             </Grid>
             <Grid Grid.Column="2" Grid.RowSpan="3" x:Name="rightGrid">
-                <StackPanel Orientation="Vertical" Margin="5" x:Name="LaunchActionPanel" Visibility="Collapsed">
+                <StackPanel>
+                    <StackPanel x:Name="topActionPanel" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Background Color: "></TextBlock>
+                            <xctk:ColorPicker SelectedColor="Black" Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged" Visibility="Visible"></xctk:ColorPicker>
+                        </StackPanel>
+                        <Image HorizontalAlignment="Left" Margin="5" x:Name="editImage" Stretch="Fill" StretchDirection="Both" MouseLeftButtonDown="SelectImageMouseLeftButtonDown" Width="92" Height="92">
+                            <Image.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Clear Image" Click="clearImageClick"/>
+                                </ContextMenu>
+                            </Image.ContextMenu>
+                        </Image>
+                    </StackPanel>
 
-                    <DockPanel Margin="0,2">
-                        <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>
-                        <TextBox x:Name="tbTitleAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    </DockPanel>
-                    <DockPanel>
-                        <TextBlock Text="Path: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="55"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBox x:Name="tbPath" Text="chrome.exe" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" MinWidth="150"/>
-                            <Button Grid.Column="1" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Click="PathButtonClick">
-                                <Button.Content>
-                                    <wpf:PackIcon Kind="FileDocument"></wpf:PackIcon>
-                                </Button.Content>
-                            </Button>
-                        </Grid>
-                    </DockPanel>
-                    <DockPanel>
-                        <TextBlock Text="Args: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="tbArgs" Text="www.google.com" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    </DockPanel>
-                    <DockPanel>
-                        <TextBlock ToolTip="This is the action that should be taken if there is already an insance of this application running." Text="New Process Action: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <ComboBox x:Name="tbNewProcessAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" />
-                    </DockPanel>
-                    <DockPanel Margin="0,5,0,0">
-                        <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
-                        <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
-                    </DockPanel>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5" x:Name="FolderActionPanel" Visibility="Collapsed">
+                    <StackPanel Orientation="Vertical" Margin="5" x:Name="LaunchActionPanel" Visibility="Collapsed">
 
-                    <DockPanel>
-                        <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="tbTitleFolderAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    </DockPanel>
-                    <DockPanel>
-                        <TextBlock Text="Trigger Application: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="tbFolderCondition" Text="chrome" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    </DockPanel>
-                    <DockPanel Margin="0,5,0,0">
-                        <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
-                        <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
-                    </DockPanel>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5" x:Name="TextStringActionPanel" Visibility="Collapsed">
-                    <DockPanel>
-                        <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="tbTitleTextString" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    </DockPanel>
-                    <TextBlock Text="String: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="tbValue" Text="Some Text String" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <DockPanel Margin="0,5,0,0">
-                        <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
-                        <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
-                    </DockPanel>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5" x:Name="HotkeyActionPanel" Visibility="Collapsed">
-                    <DockPanel>
-                        <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="tbTitleHotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    </DockPanel>
-                    <TextBlock Text="Hotkey: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="tbValueHotkey" PreviewKeyDown="hotkeyTextboxKeyDown" Text="Enter Hotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
-                    <DockPanel Margin="0,5,0,0">
-                        <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
-                        <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
-                    </DockPanel>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>
+                            <TextBox x:Name="tbTitleAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Text="Path: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="55"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="tbPath" Text="chrome.exe" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" MinWidth="150"/>
+                                <Button Grid.Column="1" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Click="PathButtonClick">
+                                    <Button.Content>
+                                        <wpf:PackIcon Kind="FileDocument"></wpf:PackIcon>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Text="Args: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="tbArgs" Text="www.google.com" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock ToolTip="This is the action that should be taken if there is already an insance of this application running." Text="New Process Action: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <ComboBox x:Name="tbNewProcessAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" />
+                        </DockPanel>
+                        <DockPanel Margin="0,5,0,0">
+                            <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
+                            <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
+                        </DockPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5" x:Name="FolderActionPanel" Visibility="Collapsed">
+
+                        <DockPanel>
+                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="tbTitleFolderAction" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Text="Trigger Application: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="tbFolderCondition" Text="chrome" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,5,0,0">
+                            <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
+                            <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
+                        </DockPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5" x:Name="TextStringActionPanel" Visibility="Collapsed">
+                        <DockPanel>
+                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="tbTitleTextString" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        </DockPanel>
+                        <TextBlock Text="String: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="tbValue" Text="Some Text String" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0" AcceptsReturn="True" TextWrapping="Wrap"/>
+                        <DockPanel Margin="0,5,0,0">
+                            <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
+                            <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
+                        </DockPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5" x:Name="HotkeyActionPanel" Visibility="Collapsed">
+                        <DockPanel>
+                            <TextBlock Text="Title: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="tbTitleHotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        </DockPanel>
+                        <TextBlock Text="Hotkey: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="tbValueHotkey" PreviewKeyDown="hotkeyTextboxKeyDown" Text="Enter Hotkey" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0"/>
+                        <DockPanel Margin="0,5,0,0">
+                            <Button Click="discardButtonClick" Content="Discard" Width="100" HorizontalAlignment="Left"></Button>
+                            <Button Click="saveButtonClick" Content="Save" Width="100" HorizontalAlignment="Right"></Button>
+                        </DockPanel>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Grid>

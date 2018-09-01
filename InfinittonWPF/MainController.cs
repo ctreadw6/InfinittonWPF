@@ -18,6 +18,7 @@ using WindowsInput.Native;
 using System.Xml.Linq;
 using System.Xml;
 using System.IO.Compression;
+using Color = System.Windows.Media.Color;
 
 namespace InfinittonWPF
 {
@@ -39,7 +40,7 @@ namespace InfinittonWPF
         Random random = new Random();
         
 
-        public static HomeFolderAction HomeAction = new HomeFolderAction() { IconPath = HomeIconPath };
+        public static HomeFolderAction HomeAction = new HomeFolderAction() { Icon = Bitmap.FromFile(HomeIconPath) };
 
         DateTime lastButtonPressTime = DateTime.MinValue;
         private int lastButtonPressNum = -1;
@@ -67,15 +68,17 @@ namespace InfinittonWPF
         {
             if (IgnoreReport) return;
 
-            if (currentBrightness == 0)
-            {
-                SetDeviceBrightness(Settings.Default.Brightness == 0 ? 80 : Settings.Default.Brightness);
-                return;
-            }
-
             int val = a.Data[1] << 8 | a.Data[2];
             int buttonNum = ButtonMapper.GetButtonIndex((ushort)val) + 1;
             if (buttonNum <= 0) return;
+
+            if (currentBrightness == 0)
+            {
+                SetDeviceBrightness(Settings.Default.Brightness == 0 ? 80 : Settings.Default.Brightness);
+                lastButtonPressTime = DateTime.Now;
+                lastButtonPressNum = buttonNum;
+                return;
+            }
 
             // Not sure why each report happens twice, but this will try and weed them out
             if (lastButtonPressNum == buttonNum && DateTime.Now.Subtract(lastButtonPressTime).TotalSeconds < 1) return;
@@ -201,6 +204,9 @@ namespace InfinittonWPF
                         path = elem.Attribute("Key").Value.ToString();
                         folderAction.Title = elem.Attribute("Title").Value.ToString();
                         folderAction.ExeConditionName = elem.Attribute("ExeCondition").Value.ToString();
+                        if (elem.Attribute("BackgroundColor") != null)
+                        folderAction.BackgroundColor =
+                            System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
                         allActions.TryAdd(path, folderAction);
                         break;
                     case "LaunchAction":
@@ -210,6 +216,9 @@ namespace InfinittonWPF
                         launchAction.Title = elem.Attribute("Title").Value.ToString();
                         launchAction.ExePath = elem.Attribute("ExePath").Value.ToString();
                         launchAction.Args = elem.Attribute("Args").Value.ToString();
+                        if (elem.Attribute("BackgroundColor") != null)
+                            launchAction.BackgroundColor =
+                                System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
                         var result = LaunchAction.ProcessRunningAction.FocusOldProcess;
                         Enum.TryParse(elem.Attribute("AlreadyRunningAction").Value.ToString(), out result);
                         launchAction.AlreadyRunningAction = result;
@@ -221,12 +230,18 @@ namespace InfinittonWPF
                         path = elem.Attribute("Key").Value.ToString();
                         textAction.Title = elem.Attribute("Title").Value.ToString();
                         textAction.Value = elem.Attribute("Value").Value.ToString();
+                        if (elem.Attribute("BackgroundColor") != null)
+                            textAction.BackgroundColor =
+                                System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
                         allActions.TryAdd(path, textAction);
                         break;
                     case "HotkeyAction":
                         HotkeyAction hotkeyAction = new HotkeyAction();
                         action = hotkeyAction;
                         path = elem.Attribute("Key").Value.ToString();
+                        if (elem.Attribute("BackgroundColor") != null)
+                            hotkeyAction.BackgroundColor =
+                                System.Drawing.ColorTranslator.FromHtml(elem.Attribute("BackgroundColor").Value.ToString());
                         hotkeyAction.Title = elem.Attribute("Title").Value.ToString();
                         for (int i = 0; i < 3; i++)
                         {
@@ -239,7 +254,7 @@ namespace InfinittonWPF
                         allActions.TryAdd(path, hotkeyAction);
                         break;
                 }
-                if (File.Exists("Images/" + path + ".png")) action.IconPath = "Images/" + path + ".png";
+                if (File.Exists("Images/" + path + ".png")) action.Icon = Bitmap.FromFile("Images/" + path + ".png");
             }
         }
 
@@ -255,6 +270,7 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("Key", kvp.Key);
                 elem.SetAttributeValue("Title", action.Title);
                 elem.SetAttributeValue("ExeCondition", action.ExeConditionName ?? "");
+                elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
                 root.Add(elem);
             }
 
@@ -267,6 +283,7 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("ExePath", action.ExePath);
                 elem.SetAttributeValue("Args", action.Args);
                 elem.SetAttributeValue("AlreadyRunningAction", action.AlreadyRunningAction.ToString());
+                elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
                 root.Add(elem);
             }
 
@@ -278,6 +295,7 @@ namespace InfinittonWPF
                 elem.SetAttributeValue("Key", kvp.Key);
                 elem.SetAttributeValue("Title", action.Title);
                 elem.SetAttributeValue("Value", action.Value);
+                elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
                 root.Add(elem);
             }
 
@@ -287,6 +305,7 @@ namespace InfinittonWPF
                 var action = kvp.Value as HotkeyAction;
                 elem.SetAttributeValue("Key", kvp.Key);
                 elem.SetAttributeValue("Title", action.Title);
+                elem.SetAttributeValue("BackgroundColor", "#" + action.BackgroundColor.R.ToString("X2") + action.BackgroundColor.G.ToString("X2") + action.BackgroundColor.B.ToString("X2"));
                 for (int i = 0; i < 3; i++)
                 {
                     if (action?.Modifiers.Count > i)
@@ -317,7 +336,7 @@ namespace InfinittonWPF
                 IButtonPressAction action;
                 if (allActions.ContainsKey(fullPath) && allActions.TryGetValue(fullPath, out action) && action.GetType() != typeof(NullAction))
                 {
-                    allActions[fullPath].IconPath = path;
+                    allActions[fullPath].Icon = Bitmap.FromFile(path);
                     LoadIcons();
                 }
 
@@ -335,9 +354,10 @@ namespace InfinittonWPF
                 else allActions.TryAdd(fullPath, action);
 
                 string path = System.IO.Path.Combine("Images", fullPath + ".png");
+                action.Icon = action.Icon ?? (action.GetDefaultIconPath() != null ? Bitmap.FromFile(action.GetDefaultIconPath()) : null);
 
-                File.Copy(action.IconPath, path, true);
-                action.IconPath = path;
+                action?.Icon?.Save(path);
+
                 Save();
             }
             LoadIcons();

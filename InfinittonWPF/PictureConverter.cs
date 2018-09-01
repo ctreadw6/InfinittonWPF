@@ -7,8 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Media;
 using Brushes = System.Drawing.Brushes;
+using Color = System.Drawing.Color;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace InfinittonWPF
 {
@@ -27,15 +30,46 @@ namespace InfinittonWPF
             0x02, 0x40, 0x1F, 0x00, 0x00, 0xB6, 0x1D, 0x00, 0x00, 0x55, 0xAA, 0xAA, 0x55, 0x11, 0x22, 0x33, 0x44
         };
 
-
-        public static byte[] GetBuffer(string path)
-        {
-            return GetBuffer(Bitmap.FromFile(path));
-        }
-
         public static byte[] GetBuffer(IButtonPressAction action)
         {
-            return GetBuffer(action.Icon, action.Title);
+            return GetBuffer(action.GetIcon, action.Title);
+        }
+
+        public static Bitmap Superimpose(Bitmap smallBmp, Color backgroundColor)
+        {
+            if (smallBmp == null)
+            {
+                var largeBmp = GetSolidBitmap(256,256, backgroundColor);
+                var finalImage = new Bitmap(largeBmp.Width, largeBmp.Height, PixelFormat.Format32bppArgb);
+                Graphics g = Graphics.FromImage(finalImage);
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.DrawImage(largeBmp, 0, 0, largeBmp.Width, largeBmp.Height);
+                return finalImage;
+            }
+            else
+            {
+                var largeBmp = GetSolidBitmap(smallBmp.Width, smallBmp.Height, backgroundColor);
+                var finalImage = new Bitmap(largeBmp.Width, largeBmp.Height, PixelFormat.Format32bppArgb);
+                Graphics g = Graphics.FromImage(finalImage);
+                g.CompositingMode = CompositingMode.SourceOver;
+                smallBmp.MakeTransparent();
+                g.DrawImage(largeBmp, 0, 0, largeBmp.Width, largeBmp.Height);
+                g.DrawImage(smallBmp, 0, 0, smallBmp.Width, smallBmp.Height);
+                return finalImage;
+            }
+        }
+
+        public static Image GetSolidBitmap(int width, int height, Color color)
+        {
+            Bitmap Bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            using (Graphics gfx = Graphics.FromImage(Bmp))
+            using (SolidBrush brush = new SolidBrush(Color.FromArgb(color.R, color.G, color.B)))
+            {
+                gfx.FillRectangle(brush, 0, 0, width, height);
+                gfx.Flush();
+            }
+
+            return Bmp;
         }
 
         public static byte[] GetBuffer(Image image, string title = null)
@@ -50,7 +84,6 @@ namespace InfinittonWPF
             }
 
             Bitmap bmp = ResizeImage(image, 72, 72);
-
             RectangleF rectf = new RectangleF(5, 50, 62, 15);
 
             if (!string.IsNullOrEmpty(title))
@@ -67,15 +100,20 @@ namespace InfinittonWPF
                 }
             }
 
-            List<byte> imageBuf = new List<byte>(72 * 72 * 3);
             
+
+            List<byte> imageBuf = new List<byte>(72 * 72 * 3);
+
             for (int i = 0; i < 72 * 72; i++)
             {
-                System.Drawing.Color color = bmp.GetPixel(i/72, i%72);
+                System.Drawing.Color color = bmp.GetPixel(i / 72, i % 72);
+
                 imageBuf.Add(color.B);
                 imageBuf.Add(color.G);
                 imageBuf.Add(color.R);
+
             }
+
             List<byte> bytes = Header1.Concat(imageBuf.Take(8017 - Header1.Length)).Concat(Header2).Concat(imageBuf.Skip(8017 - Header1.Length)).ToList();
             while (bytes.Count() < 8017 * 2) bytes.Add(0);
             return bytes.ToArray();
