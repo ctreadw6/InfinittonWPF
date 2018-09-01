@@ -305,6 +305,7 @@ namespace InfinittonWPF
                     tbValueHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).ToString();
                     Modifiers = (Actions[SelectedNumber] as HotkeyAction).Modifiers;
                     MainKey = (Actions[SelectedNumber] as HotkeyAction).MainKey;
+                    tbTitleHotkey.Text = (Actions[SelectedNumber] as HotkeyAction).Title;
                 }
                 else
                 {
